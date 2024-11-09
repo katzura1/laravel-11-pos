@@ -7,6 +7,9 @@
   document.addEventListener('DOMContentLoaded', function() {
     const toastContainer = document.getElementById('toastContainer');
 
+    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    const confirmButton = document.getElementById('confirmButton');
+
     window.showToast = function(message, delay = 5000) {
         const toastId = `toast-${Date.now()}`;
         const toastHTML = `
@@ -61,6 +64,18 @@
           `<div class="invalid-feedback">${error}</div>`
         );
       });
+    }
+
+    window.showConfirmationDialog = function(message, onConfirm) {
+        const modalBody = document.querySelector('#confirmationModal .modal-body');
+        modalBody.textContent = message;
+
+        confirmButton.onclick = function() {
+            onConfirm();
+            confirmationModal.hide();
+        };
+
+        confirmationModal.show();
     }
   });
 </script>

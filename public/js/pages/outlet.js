@@ -235,13 +235,10 @@ class OutletTableManager {
   }
 
   handleDeleteOutlet(outlet) {
-    const confirmDelete = confirm(
-      `Are you sure you want to delete ${outlet.name}?`
+    showConfirmationDialog(
+      `Are you sure you want to delete ${outlet.name}?`,
+      () => this.deleteOutlet(outlet.id)
     );
-
-    if (confirmDelete) {
-      this.deleteOutlet(outlet.id);
-    }
   }
 
   async deleteOutlet(outletId) {
