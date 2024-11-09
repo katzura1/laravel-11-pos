@@ -57,7 +57,7 @@
 
     window.displayValidationErrors = function(element, errors) {
       Object.entries(errors).forEach(([field, [error]]) => {
-        const input = element.querySelector(`input[name="${field}"]`);
+        const input = element.querySelector(`[name="${field}"]`);
         input.classList.add("is-invalid");
         input.insertAdjacentHTML(
           "afterend",

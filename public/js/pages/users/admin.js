@@ -52,7 +52,12 @@ class UserTableManager {
   async fetchUsers() {
     try {
       this.showLoading();
-      const response = await fetch(this.buildUrl());
+      const response = await fetch(this.buildUrl(), {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
       const data = await response.json();
 
       this.renderTable(data.data);

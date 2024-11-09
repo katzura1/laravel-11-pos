@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\OutletUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -37,5 +38,10 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function outletUser()
+    {
+        return $this->hasOne(OutletUser::class);
     }
 }

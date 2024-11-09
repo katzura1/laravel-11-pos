@@ -1,23 +1,24 @@
-class OutletTableManager {
+class UserTableManager {
   constructor() {
     this.searchInput = document.getElementById("search");
     this.pageLengthSelect = document.getElementById("page-length");
+    this.searchOutlet = document.getElementById("search-outlet");
     this.loading = document.getElementById("loading");
-    this.table = document.getElementById("outlets-table");
-    this.tbody = document.querySelector("#outlets-table tbody");
+    this.table = document.getElementById("cashiers-table");
+    this.tbody = document.querySelector("#cashiers-table tbody");
     this.pagination = document.getElementById("pagination");
     this.currentPage = 1;
-    this.modalOutlets = new bootstrap.Modal(
-      document.getElementById("modal-outlets")
+    this.modalCashiers = new bootstrap.Modal(
+      document.getElementById("modal-cashiers")
     );
     this.buttonAdd = document.getElementById("btn-add");
-    this.outletForm = document.getElementById("outlet-form");
-    this.buttonSave = this.modalOutlets._element.querySelector(
+    this.cashierForm = document.getElementById("cashier-form");
+    this.buttonSave = this.modalCashiers._element.querySelector(
       ".modal-footer button#btn-save"
     );
 
     this.initializeEventListeners();
-    this.fetchOutlets();
+    this.fetchCashiers();
   }
 
   initializeEventListeners() {
@@ -25,11 +26,12 @@ class OutletTableManager {
     this.pageLengthSelect.addEventListener("change", () =>
       this.handlePageLengthChange()
     );
-    this.buttonAdd.addEventListener("click", () => this.handleAddOutlet());
-    this.buttonSave.addEventListener("click", () => this.handleSaveOutlet());
-    this.outletForm.addEventListener("submit", (event) => {
+    this.searchOutlet.addEventListener("change", () => this.handleSearch());
+    this.buttonAdd.addEventListener("click", () => this.handleAddUser());
+    this.buttonSave.addEventListener("click", () => this.handleSaveUser());
+    this.cashierForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      this.handleSaveOutlet();
+      this.handleSaveUser();
     });
   }
 
@@ -40,16 +42,16 @@ class OutletTableManager {
 
     this.searchTimeout = setTimeout(() => {
       this.currentPage = 1;
-      this.fetchOutlets();
+      this.fetchCashiers();
     }, 200);
   }
 
   handlePageLengthChange() {
     this.currentPage = 1;
-    this.fetchOutlets();
+    this.fetchCashiers();
   }
 
-  async fetchOutlets() {
+  async fetchCashiers() {
     try {
       this.showLoading();
       const response = await fetch(this.buildUrl(), {
@@ -63,7 +65,7 @@ class OutletTableManager {
       this.renderTable(data.data);
       this.renderPagination(data);
     } catch (error) {
-      console.error("Error fetching outlets:", error);
+      console.error("Error fetching cashiers:", error);
     } finally {
       this.hideLoading();
     }
@@ -74,44 +76,38 @@ class OutletTableManager {
       page: this.currentPage,
       length: this.pageLengthSelect.value,
       search: this.searchInput.value,
+      outlet_id: this.searchOutlet.value,
     });
-    return `/outlet/get?${params.toString()}`;
+    return `/cashier/get?${params.toString()}`;
   }
 
-  renderTable(outlets) {
-    this.tbody.innerHTML = outlets.length
-      ? outlets.map((outlet, key) => this.createOutletRow(outlet, key)).join("")
+  renderTable(cashiers) {
+    this.tbody.innerHTML = cashiers.length
+      ? cashiers
+          .map((cashier, key) => this.createUserRow(cashier, key))
+          .join("")
       : this.createEmptyRow();
 
     // Add click event listeners to edit buttons
     this.tbody.querySelectorAll("button.btn-edit").forEach((button, index) => {
       button.addEventListener("click", () => {
-        // console.log("Edit outlet:", outlets[index]);
-        this.handleEditOutlet(outlets[index]);
+        console.log("Edit cashier:", cashiers[index]);
+        this.handleEditUser(cashiers[index]);
       });
     });
-
-    // Add click event listeners to delete buttons
-    this.tbody
-      .querySelectorAll("button.btn-delete")
-      .forEach((button, index) => {
-        button.addEventListener("click", () => {
-          // console.log("Delete outlet:", outlets[index]);
-          this.handleDeleteOutlet(outlets[index]);
-        });
-      });
   }
 
-  createOutletRow(outlet, key) {
+  createUserRow(cashier, key) {
     const rowNo =
       (this.currentPage - 1) * parseInt(this.pageLengthSelect.value) + key + 1;
     return `
       <tr>
         <td>${rowNo}</td>
-        <td>${outlet.name}</td>
+        <td>${cashier.name}</td>
+        <td>${cashier.username}</td>
+        <td>${cashier.outlet_name}</td>
         <td>
           <button class="btn btn-primary btn-edit">Edit</button>
-          <button class="btn btn-danger btn-delete">Delete</button>
         </td>
       </tr>
     `;
@@ -120,7 +116,7 @@ class OutletTableManager {
   createEmptyRow() {
     return `
       <tr>
-        <td colspan="5" class="text-center">No outlets found</td>
+        <td colspan="5" class="text-center">No cashiers found</td>
       </tr>
     `;
   }
@@ -195,20 +191,26 @@ class OutletTableManager {
       link.addEventListener("click", (event) => {
         event.preventDefault();
         this.currentPage = parseInt(event.target.getAttribute("data-page"));
-        this.fetchOutlets();
+        this.fetchCashiers();
       });
     });
   }
 
-  handleAddOutlet() {
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+  handleAddUser() {
+    const modalBody = this.modalCashiers._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
 
     //set value
     idInput.value = "";
 
+    //set required to password
+    modalBody
+      .querySelector('input[name="password"]')
+      .setAttribute("required", "true");
+    modalBody.querySelector('label[for="password"]').classList.add("required");
+
     //show modal
-    this.modalOutlets.show();
+    this.modalCashiers.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -219,16 +221,28 @@ class OutletTableManager {
     }, 200);
   }
 
-  handleEditOutlet(outlet) {
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+  handleEditUser(cashier) {
+    const modalBody = this.modalCashiers._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
     const nameInput = modalBody.querySelector('input[name="name"]');
+    const usernameInput = modalBody.querySelector('input[name="username"]');
+    const outletIdSelect = modalBody.querySelector('select[name="outlet_id"]');
     //set value
-    idInput.value = outlet.id;
-    nameInput.value = outlet.name;
+    idInput.value = cashier.id;
+    nameInput.value = cashier.name;
+    usernameInput.value = cashier.username;
+    outletIdSelect.value = cashier.outlet_id;
+
+    //set not required to password
+    modalBody
+      .querySelector('input[name="password"]')
+      .removeAttribute("required");
+    modalBody
+      .querySelector('label[for="password"]')
+      .classList.remove("required");
 
     //show modal
-    this.modalOutlets.show();
+    this.modalCashiers.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -239,45 +253,13 @@ class OutletTableManager {
     }, 200);
   }
 
-  handleDeleteOutlet(outlet) {
-    showConfirmationDialog(
-      `Are you sure you want to delete ${outlet.name}?`,
-      () => this.deleteOutlet(outlet.id)
-    );
-  }
-
-  async deleteOutlet(outletId) {
-    try {
-      const url = `/outlet/destroy`;
-      const csrfToken = document.querySelector(
-        'meta[name="csrf-token"]'
-      ).content;
-
-      const data = {
-        id: outletId,
-        _token: csrfToken,
-        _method: "DELETE",
-      };
-
-      const response = await submitForm(url, data);
-
-      if (response.ok) {
-        await this.handleSuccessfulDelete();
-      } else {
-        await this.handleDeleteError(response);
-      }
-    } catch (error) {
-      console.error("Error deleting outlet:", error);
-    }
-  }
-
-  async handleSaveOutlet() {
+  async handleSaveUser() {
     if (!this.validateForm()) return;
 
     const formData = this.getFormData();
-    const url = formData.id ? "/outlet/put" : "/outlet/store";
+    const url = formData.id ? "/cashier/put" : "/cashier/store";
 
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+    const modalBody = this.modalCashiers._element.querySelector(".modal-body");
     clearValidationErrors(modalBody);
     this.buttonSave.disabled = true;
 
@@ -296,40 +278,40 @@ class OutletTableManager {
 
   validateForm() {
     return (
-      this.outletForm.checkValidity() ||
-      (this.outletForm.reportValidity(), false)
+      this.cashierForm.checkValidity() ||
+      (this.cashierForm.reportValidity(), false)
     );
   }
 
   getFormData() {
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+    const modalBody = this.modalCashiers._element.querySelector(".modal-body");
     const inputs = {
       id: modalBody.querySelector('input[name="id"]').value,
       name: modalBody.querySelector('input[name="name"]').value,
+      username: modalBody.querySelector('input[name="username"]').value,
+      password: modalBody.querySelector('input[name="password"]').value,
+      outlet_id: modalBody.querySelector('select[name="outlet_id"]').value,
       _token: document.querySelector('meta[name="csrf-token"]').content,
       _method: modalBody.querySelector('input[name="id"]').value
         ? "PUT"
         : "POST",
     };
 
+    if (!inputs.password) delete inputs.password;
     return inputs;
   }
 
   async handleSuccessfulSave() {
-    this.modalOutlets.hide();
-    this.fetchOutlets();
+    this.modalCashiers.hide();
+    this.fetchCashiers();
     this.resetForm();
-    showToast("Outlet saved successfully");
-  }
-
-  async handleSuccessfulDelete() {
-    this.fetchOutlets();
-    showToast("Outlet saved deleted");
+    showToast("User saved successfully");
   }
 
   resetForm() {
-    const inputs =
-      this.modalOutlets._element.querySelectorAll(".modal-body input");
+    const inputs = this.modalCashiers._element.querySelectorAll(
+      ".modal-body input, .modal-body select"
+    );
     inputs.forEach((input) => (input.value = ""));
   }
 
@@ -337,20 +319,13 @@ class OutletTableManager {
     const data = await response.json();
 
     if (data.message) {
-      showToast(`Failed save outlet: ${data.message ?? "Unknown error"}`);
+      showToast(`Error save cashier: ${data.message}`);
     }
 
     if (data.errors) {
-      const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+      const modalBody =
+        this.modalCashiers._element.querySelector(".modal-body");
       displayValidationErrors(modalBody, data.errors);
-    }
-  }
-
-  async handleDeleteError(response) {
-    const data = await response.json();
-
-    if (data.message) {
-      showToast(`Failed delete outlet: ${data.message ?? "Unknown error"}`);
     }
   }
 
@@ -365,4 +340,4 @@ class OutletTableManager {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => new OutletTableManager());
+document.addEventListener("DOMContentLoaded", () => new UserTableManager());
