@@ -1,23 +1,23 @@
-class UserTableManager {
+class OutletTableManager {
   constructor() {
     this.searchInput = document.getElementById("search");
     this.pageLengthSelect = document.getElementById("page-length");
     this.loading = document.getElementById("loading");
-    this.table = document.getElementById("users-table");
-    this.tbody = document.querySelector("#users-table tbody");
+    this.table = document.getElementById("outlets-table");
+    this.tbody = document.querySelector("#outlets-table tbody");
     this.pagination = document.getElementById("pagination");
     this.currentPage = 1;
-    this.modalUsers = new bootstrap.Modal(
-      document.getElementById("modal-users")
+    this.modalOutlets = new bootstrap.Modal(
+      document.getElementById("modal-outlets")
     );
     this.buttonAdd = document.getElementById("btn-add");
-    this.userForm = document.getElementById("user-form");
-    this.buttonSave = this.modalUsers._element.querySelector(
+    this.outletForm = document.getElementById("outlet-form");
+    this.buttonSave = this.modalOutlets._element.querySelector(
       ".modal-footer button#btn-save"
     );
 
     this.initializeEventListeners();
-    this.fetchUsers();
+    this.fetchOutlets();
   }
 
   initializeEventListeners() {
@@ -25,11 +25,11 @@ class UserTableManager {
     this.pageLengthSelect.addEventListener("change", () =>
       this.handlePageLengthChange()
     );
-    this.buttonAdd.addEventListener("click", () => this.handleAddUser());
-    this.buttonSave.addEventListener("click", () => this.handleSaveUser());
-    this.userForm.addEventListener("submit", (event) => {
+    this.buttonAdd.addEventListener("click", () => this.handleAddOutlet());
+    this.buttonSave.addEventListener("click", () => this.handleSaveOutlet());
+    this.outletForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      this.handleSaveUser();
+      this.handleSaveOutlet();
     });
   }
 
@@ -40,16 +40,16 @@ class UserTableManager {
 
     this.searchTimeout = setTimeout(() => {
       this.currentPage = 1;
-      this.fetchUsers();
+      this.fetchOutlets();
     }, 200);
   }
 
   handlePageLengthChange() {
     this.currentPage = 1;
-    this.fetchUsers();
+    this.fetchOutlets();
   }
 
-  async fetchUsers() {
+  async fetchOutlets() {
     try {
       this.showLoading();
       const response = await fetch(this.buildUrl());
@@ -58,7 +58,7 @@ class UserTableManager {
       this.renderTable(data.data);
       this.renderPagination(data);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching outlets:", error);
     } finally {
       this.hideLoading();
     }
@@ -70,34 +70,43 @@ class UserTableManager {
       length: this.pageLengthSelect.value,
       search: this.searchInput.value,
     });
-    return `/admin/get?${params.toString()}`;
+    return `/outlet/get?${params.toString()}`;
   }
 
-  renderTable(users) {
-    this.tbody.innerHTML = users.length
-      ? users.map((user, key) => this.createUserRow(user, key)).join("")
+  renderTable(outlets) {
+    this.tbody.innerHTML = outlets.length
+      ? outlets.map((outlet, key) => this.createOutletRow(outlet, key)).join("")
       : this.createEmptyRow();
 
     // Add click event listeners to edit buttons
     this.tbody.querySelectorAll("button.btn-edit").forEach((button, index) => {
       button.addEventListener("click", () => {
-        console.log("Edit user:", users[index]);
-        this.handleEditUser(users[index]);
+        // console.log("Edit outlet:", outlets[index]);
+        this.handleEditOutlet(outlets[index]);
       });
     });
+
+    // Add click event listeners to delete buttons
+    this.tbody
+      .querySelectorAll("button.btn-delete")
+      .forEach((button, index) => {
+        button.addEventListener("click", () => {
+          // console.log("Delete outlet:", outlets[index]);
+          this.handleDeleteOutlet(outlets[index]);
+        });
+      });
   }
 
-  createUserRow(user, key) {
+  createOutletRow(outlet, key) {
     const rowNo =
       (this.currentPage - 1) * parseInt(this.pageLengthSelect.value) + key + 1;
     return `
       <tr>
         <td>${rowNo}</td>
-        <td>${user.name}</td>
-        <td>${user.username}</td>
-        <td>${user.role}</td>
+        <td>${outlet.name}</td>
         <td>
           <button class="btn btn-primary btn-edit">Edit</button>
+          <button class="btn btn-danger btn-delete">Delete</button>
         </td>
       </tr>
     `;
@@ -106,7 +115,7 @@ class UserTableManager {
   createEmptyRow() {
     return `
       <tr>
-        <td colspan="5" class="text-center">No users found</td>
+        <td colspan="5" class="text-center">No outlets found</td>
       </tr>
     `;
   }
@@ -181,26 +190,20 @@ class UserTableManager {
       link.addEventListener("click", (event) => {
         event.preventDefault();
         this.currentPage = parseInt(event.target.getAttribute("data-page"));
-        this.fetchUsers();
+        this.fetchOutlets();
       });
     });
   }
 
-  handleAddUser() {
-    const modalBody = this.modalUsers._element.querySelector(".modal-body");
+  handleAddOutlet() {
+    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
 
     //set value
     idInput.value = "";
 
-    //set required to password
-    modalBody
-      .querySelector('input[name="password"]')
-      .setAttribute("required", "true");
-    modalBody.querySelector('label[for="password"]').classList.add("required");
-
     //show modal
-    this.modalUsers.show();
+    this.modalOutlets.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -211,26 +214,16 @@ class UserTableManager {
     }, 200);
   }
 
-  handleEditUser(user) {
-    const modalBody = this.modalUsers._element.querySelector(".modal-body");
+  handleEditOutlet(outlet) {
+    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
     const nameInput = modalBody.querySelector('input[name="name"]');
-    const usernameInput = modalBody.querySelector('input[name="username"]');
     //set value
-    idInput.value = user.id;
-    nameInput.value = user.name;
-    usernameInput.value = user.username;
-
-    //set not required to password
-    modalBody
-      .querySelector('input[name="password"]')
-      .removeAttribute("required");
-    modalBody
-      .querySelector('label[for="password"]')
-      .classList.remove("required");
+    idInput.value = outlet.id;
+    nameInput.value = outlet.name;
 
     //show modal
-    this.modalUsers.show();
+    this.modalOutlets.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -241,13 +234,48 @@ class UserTableManager {
     }, 200);
   }
 
-  async handleSaveUser() {
+  handleDeleteOutlet(outlet) {
+    const confirmDelete = confirm(
+      `Are you sure you want to delete ${outlet.name}?`
+    );
+
+    if (confirmDelete) {
+      this.deleteOutlet(outlet.id);
+    }
+  }
+
+  async deleteOutlet(outletId) {
+    try {
+      const url = `/outlet/destroy`;
+      const csrfToken = document.querySelector(
+        'meta[name="csrf-token"]'
+      ).content;
+
+      const data = {
+        id: outletId,
+        _token: csrfToken,
+        _method: "DELETE",
+      };
+
+      const response = await submitForm(url, data);
+
+      if (response.ok) {
+        await this.handleSuccessfulDelete();
+      } else {
+        await this.handleDeleteError(response);
+      }
+    } catch (error) {
+      console.error("Error deleting outlet:", error);
+    }
+  }
+
+  async handleSaveOutlet() {
     if (!this.validateForm()) return;
 
     const formData = this.getFormData();
-    const url = formData.id ? "/admin/put" : "/admin/store";
+    const url = formData.id ? "/outlet/put" : "/outlet/store";
 
-    const modalBody = this.modalUsers._element.querySelector(".modal-body");
+    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
     clearValidationErrors(modalBody);
     this.buttonSave.disabled = true;
 
@@ -266,37 +294,40 @@ class UserTableManager {
 
   validateForm() {
     return (
-      this.userForm.checkValidity() || (this.userForm.reportValidity(), false)
+      this.outletForm.checkValidity() ||
+      (this.outletForm.reportValidity(), false)
     );
   }
 
   getFormData() {
-    const modalBody = this.modalUsers._element.querySelector(".modal-body");
+    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
     const inputs = {
       id: modalBody.querySelector('input[name="id"]').value,
       name: modalBody.querySelector('input[name="name"]').value,
-      username: modalBody.querySelector('input[name="username"]').value,
-      password: modalBody.querySelector('input[name="password"]').value,
       _token: document.querySelector('meta[name="csrf-token"]').content,
       _method: modalBody.querySelector('input[name="id"]').value
         ? "PUT"
         : "POST",
     };
 
-    if (!inputs.password) delete inputs.password;
     return inputs;
   }
 
   async handleSuccessfulSave() {
-    this.modalUsers.hide();
-    this.fetchUsers();
+    this.modalOutlets.hide();
+    this.fetchOutlets();
     this.resetForm();
-    showToast("User saved successfully");
+    showToast("Outlet saved successfully");
+  }
+
+  async handleSuccessfulDelete() {
+    this.fetchOutlets();
+    showToast("Outlet saved deleted");
   }
 
   resetForm() {
     const inputs =
-      this.modalUsers._element.querySelectorAll(".modal-body input");
+      this.modalOutlets._element.querySelectorAll(".modal-body input");
     inputs.forEach((input) => (input.value = ""));
   }
 
@@ -304,12 +335,20 @@ class UserTableManager {
     const data = await response.json();
 
     if (data.message) {
-      showToast(`Error save user: ${data.message}`);
+      showToast(`Failed save outlet: ${data.message ?? "Unknown error"}`);
     }
 
     if (data.errors) {
-      const modalBody = this.modalUsers._element.querySelector(".modal-body");
+      const modalBody = this.modalOutlets._element.querySelector(".modal-body");
       displayValidationErrors(modalBody, data.errors);
+    }
+  }
+
+  async handleDeleteError(response) {
+    const data = await response.json();
+
+    if (data.message) {
+      showToast(`Failed delete outlet: ${data.message ?? "Unknown error"}`);
     }
   }
 
@@ -324,4 +363,4 @@ class UserTableManager {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => new UserTableManager());
+document.addEventListener("DOMContentLoaded", () => new OutletTableManager());
