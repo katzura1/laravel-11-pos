@@ -309,7 +309,7 @@ class UserTableManager {
     const data = await response.json();
 
     if (data.message) {
-      showToast(`Error save user: ${data.message}`);
+      showToast(`Error save user: ${data.message}`, "error");
     }
 
     if (data.errors) {

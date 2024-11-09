@@ -29,7 +29,7 @@ class CashierController extends Controller
 
     public function getCashiers(Request $request): JsonResponse
     {
-        $admins = User::where('role', 'cashier')
+        $cashiers = User::where('role', 'cashier')
             ->select(
                 'users.id',
                 'users.name',
@@ -40,18 +40,20 @@ class CashierController extends Controller
             )
             ->join('outlet_users', 'users.id', '=', 'outlet_users.user_id')
             ->join('outlets', 'outlet_users.outlet_id', '=', 'outlets.id')
-            ->when($request->has('outlet_id'), function ($query) use ($request) {
-                return $query->where('outlet_users.outlet_id', $request->query('outlet_id'));
+            ->when($request->outlet_id, function ($query) use ($request) {
+                return $query->where('outlet_users.outlet_id', $request->outlet_id);
             })
             ->when($request->has('search'), function ($query) use ($request) {
                 $search = $request->query('search');
-                return $query->where('users.name', 'like', "%$search%")
+                return $query->where(function ($q) use ($search) {
+                    $q->where('users.name', 'like', "%$search%")
                              ->orWhere('users.username', 'like', "%$search%")
                              ->orWhere('outlets.name', 'like', "%$search%");
+                });
             })
             ->paginate($request->length ?? 10);
 
-        return response()->json($admins);
+        return response()->json($cashiers);
     }
 
     public function store(StoreRequest $request): JsonResponse
@@ -78,6 +80,9 @@ class CashierController extends Controller
     {
         return $this->handleTransaction(function () use ($request) {
             $validated = $request->safe()->except('id', 'outlet_id', 'password');
+            if ($request->has('password')) {
+                $validated['password'] = Hash::make($request->password);
+            }
             $user = User::findOrFail($request->input('id'));
             $user->update($validated);
             //update outlet_user record

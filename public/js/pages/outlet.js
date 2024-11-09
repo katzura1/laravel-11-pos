@@ -272,7 +272,7 @@ class OutletTableManager {
   }
 
   async handleSaveOutlet() {
-    if (!this.validateForm()) return;
+    if (!validateForm(this.outletForm)) return;
 
     const formData = this.getFormData();
     const url = formData.id ? "/outlet/put" : "/outlet/store";
@@ -292,13 +292,6 @@ class OutletTableManager {
     } finally {
       this.buttonSave.removeAttribute("disabled");
     }
-  }
-
-  validateForm() {
-    return (
-      this.outletForm.checkValidity() ||
-      (this.outletForm.reportValidity(), false)
-    );
   }
 
   getFormData() {
@@ -337,7 +330,10 @@ class OutletTableManager {
     const data = await response.json();
 
     if (data.message) {
-      showToast(`Failed save outlet: ${data.message ?? "Unknown error"}`);
+      showToast(
+        `Failed save outlet: ${data.message ?? "Unknown error"}`,
+        "error"
+      );
     }
 
     if (data.errors) {
@@ -350,7 +346,10 @@ class OutletTableManager {
     const data = await response.json();
 
     if (data.message) {
-      showToast(`Failed delete outlet: ${data.message ?? "Unknown error"}`);
+      showToast(
+        `Failed delete outlet: ${data.message ?? "Unknown error"}`,
+        "error"
+      );
     }
   }
 

@@ -9,9 +9,15 @@ use App\Http\Controllers\User\CashierController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [LoginController::class,'index'])->name('login');
+    Route::post('authenticate', [LoginController::class,'authenticate'])->name('authenticate');
 });
 
-Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+
+    Route::post('logout', [LoginController::class,'logout'])->name('logout');
+});
+
 
 Route::prefix('admin')->middleware([])->group(function () {
     Route::get('/', [AdminController::class,'index'])->name('admin.index');

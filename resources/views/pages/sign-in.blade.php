@@ -9,7 +9,7 @@
     </style>
   </head>
   <body  class=" d-flex flex-column">
-    <script src="/js/demo-theme.min.js"></script>
+    <script src="/js/theme.min.js"></script>
     <div class="page page-center">
       <div class="container container-normal py-4">
         <div class="row align-items-center g-4">
@@ -21,10 +21,11 @@
               <div class="card card-md">
                 <div class="card-body">
                   <h2 class="h2 text-center mb-4">Login to your account</h2>
-                  <form action="./" method="get" autocomplete="off" novalidate>
+                  <form id="form-login" method="POST">
+                    @csrf
                     <div class="mb-3">
-                      <label class="form-label">Email address</label>
-                      <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" autocomplete="off">
+                      <label class="form-label">Username</label>
+                      <input type="text" name="username" id="username" class="form-control" placeholder="Input your username" autocomplete="off" required>
                     </div>
                     <div class="mb-2">
                       <label class="form-label">
@@ -46,7 +47,7 @@
                       </label>
                     </div>
                     <div class="form-footer">
-                      <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                      <button type="submit" class="btn btn-primary w-100" id="btn-sign-in">Sign in</button>
                     </div>
                   </form>
                 </div>
@@ -59,9 +60,11 @@
         </div>
       </div>
     </div>
+    @include('components.utils')
     <!-- Libs JS -->
     <!-- Tabler Core -->
     <script src="/js/tabler.min.js" defer></script>
+    <script src="/js/utils.js"></script>
     <script src="/js/pages/sign-in.js"></script>
   </body>
 </html>

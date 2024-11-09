@@ -319,7 +319,7 @@ class UserTableManager {
     const data = await response.json();
 
     if (data.message) {
-      showToast(`Error save cashier: ${data.message}`);
+      showToast(`Error save cashier: ${data.message}`, "error");
     }
 
     if (data.errors) {

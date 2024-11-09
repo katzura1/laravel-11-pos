@@ -96,6 +96,5 @@
 @endsection 
 
 @push('after-js')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/pages/users/cashier.js"></script>
 @endpush
