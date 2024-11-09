@@ -53,11 +53,10 @@
           <div class="modal-body">
             <form method="POST" id="supplier-form">
               @csrf
-              <input type="hidden" name="role" value="admin">
               <input type="hidden" name="id">
               <div class="mb-3">
                 <label class="form-label required" for="name">Nama</label>
-                <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128">
+                <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128" required>
               </div>
             </form>
           </div>

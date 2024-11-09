@@ -102,4 +102,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+
+  window.formattedDate = function (date) {
+    //input yyyy-mm-dd
+    //return with format Dec, 10 2024
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(date).toLocaleDateString("en-US", options);
+  };
 });

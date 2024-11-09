@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OutletController;
@@ -50,4 +51,12 @@ Route::prefix('supplier')->middleware(['auth'])->group(function () {
     Route::post('/store', [SupplierController::class,'store'])->name('supplier.store');
     Route::put('/put', [SupplierController::class,'update'])->name('supplier.update');
     Route::delete('/destroy', [SupplierController::class,'destroy'])->name('supplier.destroy');
+});
+
+Route::prefix('customer')->middleware(['auth'])->group(function () {
+    Route::get('/', [CustomerController::class,'index'])->name('customer.index');
+    Route::get('/get', [CustomerController::class,'getCustomers'])->name('customer.getCustomers');
+    Route::post('/store', [CustomerController::class,'store'])->name('customer.store');
+    Route::put('/put', [CustomerController::class,'update'])->name('customer.update');
+    Route::delete('/destroy', [CustomerController::class,'destroy'])->name('customer.destroy');
 });

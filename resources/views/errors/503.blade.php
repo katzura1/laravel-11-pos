@@ -25,20 +25,28 @@
   <body  class="d-flex flex-column">
     <script src="/js/demo-theme.min.js"></script>
     <div class="page page-center">
-      <div class="container container-narrow py-4">
-        <div class="text-center mb-4">
-          @include('components.logo')
-        </div>
-        <div class="card card-md">
-          <div class="card-body text-center">
-            <h2 class="mb-3">We are currently undergoing maintenance.</h2>
-            <p class="text-secondary mb-3">
-              Our website is currently undergoing maintenance to enhance our services. <br/>
-              We will be back shortly. Thank you for your understanding.
-            </p>
-            <p class="text-secondary">
-              If you need urgent assistance, please contact us at [email@example.com].
-            </p>
+      <div class="container py-4">
+          <div class="text-center mb-4">
+            @include('components.logo')
+          </div>
+          <div class="row d-flex align-items-center">
+            <div class="col-md-6">
+              <div class="card card-md">
+                <div class="card-body text-center">
+                  <h2 class="mb-3">We are currently undergoing maintenance.</h2>
+                  <p class="text-secondary mb-3">
+                    Our website is currently undergoing maintenance to enhance our services. <br/>
+                    We will be back shortly. Thank you for your understanding.
+                  </p>
+                  <p class="text-secondary">
+                    If you need urgent assistance, please contact us at [email@example.com].
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <img src="/static/illustrations/undraw_bug_fixing_oc7a.svg" class="img-fluid" alt="Server Down">
+            </div>
           </div>
         </div>
       </div>
