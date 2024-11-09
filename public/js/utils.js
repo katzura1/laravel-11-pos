@@ -23,12 +23,11 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
-  window.showToast = function (message, type = "success", delay = 5000) {
+  window.showToast = function (message, type = "success", delay = 1000) {
     const toastId = `toast-${Date.now()}`;
     const icon = type === "success" ? "✔️" : "❌";
-    const bgColor = type === "success" ? "bg-success" : "bg-danger";
     const toastHTML = `
-      <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="${delay}">
+      <div id="${toastId}" class="toast fade" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="${delay}">
         <div class="toast-header">
           <strong class="me-auto">${icon} Notification</strong>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -88,16 +87,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   };
 
-  btnLogout.addEventListener("click", async function (e) {
-    e.preventDefault();
-
-    const response = await submitForm("/logout", {});
-
-    if (response.ok) {
-      window.location.href = "/";
-    } else {
-      const data = await response.json();
-      showToast(data.message ?? "Unknown Error", "error");
-    }
-  });
+  //if btnLogout exists
+  if (btnLogout) {
+    btnLogout.addEventListener("click", async function (event) {
+      event.preventDefault();
+      showConfirmationDialog("Are you sure you want to logout?", async () => {
+        const response = await submitForm(this.href, {});
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const data = await response.json();
+          showToast(data.message, "danger");
+        }
+      });
+    });
+  }
 });

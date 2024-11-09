@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\User\Cashier;
+namespace App\Http\Requests\Supplier;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,7 @@ class StoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->role === 'admin';
+        return auth()->user()?->role === 'admin';
     }
 
     /**
@@ -22,10 +22,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:191'],
-            'username' => ['required', 'string', 'max:128', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'max:25'],
-            'outlet_id' => ['required', 'integer', 'exists:outlets,id'],
+            'name' => ['required', 'string',  'max:80','unique:suppliers,name'],
         ];
     }
 }

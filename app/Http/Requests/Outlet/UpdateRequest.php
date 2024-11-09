@@ -11,7 +11,6 @@ class UpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
         return auth()->user()->role === 'admin';
     }
 
