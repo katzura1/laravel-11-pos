@@ -26,7 +26,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/get', [AdminController::class,'getAdmins'])->name('admin.getAdmins');
     Route::post('/store', [AdminController::class,'store'])->name('admin.store');
     Route::put('/put', [AdminController::class,'update'])->name('admin.update');
-    // Route::delete('/admins/{id}', [AdminController::class,'destroy'])->name('admin.destroy');
+
+    //outlet mapping
+    Route::post('store-outlet', [AdminController::class,'storeOutlet'])->name('admin.storeOutlet');
 });
 
 Route::prefix('cashier')->middleware(['auth'])->group(function () {

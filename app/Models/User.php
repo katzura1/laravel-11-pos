@@ -42,6 +42,6 @@ class User extends Authenticatable
 
     public function outletUser()
     {
-        return $this->hasOne(OutletUser::class);
+        return $this->hasMany(OutletUser::class);
     }
 }

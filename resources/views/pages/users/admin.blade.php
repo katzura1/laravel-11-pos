@@ -26,7 +26,6 @@
                         <th>No</th>
                         <th>Name</th>
                         <th>Username</th>
-                        <th>Role</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -68,6 +67,67 @@
               <div class="mb-3">
                 <label class="form-label required" for="password">Password</label>
                 <input type="text" class="form-control" name="password" placeholder="Input Password" maxlength="25">
+              </div>
+              <div class="mb-3" id="checkbox-outlet">
+                <div class="d-flex gap-4">
+                  <div class="form-label required">Outlet</div>
+                  <!-- Checkbox all -->
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="check_all">
+                    <span class="form-check-label">Pilih Semua</span>
+                  </label>
+                </div>
+                <div>
+                  @foreach ($outlets as $outlet)
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="outlet_id[]" value="{{ $outlet->id }}">
+                    <span class="form-check-label">{{ $outlet->name }}</span>
+                  </label>
+                  @endforeach
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="btn-save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal modal-blur fade" id="modal-outlets" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Form Data Outlet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" id="outlet-form">
+              @csrf
+              <input type="hidden" name="user_id">
+              <div class="mb-3">
+                <label class="form-label" for="name">Nama</label>
+                <input type="text" class="form-control" name="name" readonly>
+              </div>
+              <div class="mb-3">
+                <div class="d-flex gap-4">
+                  <div class="form-label required">Outlet</div>
+                  <!-- Checkbox all -->
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="check_all">
+                    <span class="form-check-label">Pilih Semua</span>
+                  </label>
+                </div>
+                <div>
+                  @foreach ($outlets as $outlet)
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="outlet_id[]" value="{{ $outlet->id }}">
+                    <span class="form-check-label">{{ $outlet->name }}</span>
+                  </label>
+                  @endforeach
+                </div>
               </div>
             </form>
           </div>

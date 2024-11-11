@@ -15,6 +15,20 @@ class UserTableManager {
     this.buttonSave = this.modalUsers._element.querySelector(
       ".modal-footer button#btn-save"
     );
+    this.checkBoxUserOutletAll = this.modalUsers._element.querySelector(
+      'input[name="check_all"]'
+    );
+
+    this.outletForm = document.getElementById("outlet-form");
+    this.modalOutlets = new bootstrap.Modal(
+      document.getElementById("modal-outlets")
+    );
+    this.buttonSaveOutlet = this.modalOutlets._element.querySelector(
+      ".modal-footer button#btn-save"
+    );
+    this.checkBoxOutletAll = this.modalOutlets._element.querySelector(
+      'input[name="check_all"]'
+    );
 
     this.initializeEventListeners();
     this.fetchUsers();
@@ -26,11 +40,33 @@ class UserTableManager {
       this.handlePageLengthChange()
     );
     this.buttonAdd.addEventListener("click", () => this.handleAddUser());
+
+    this.checkBoxUserOutletAll.addEventListener("change", () =>
+      this.handleCheckAll(this.checkBoxUserOutletAll, this.userForm)
+    );
     this.buttonSave.addEventListener("click", () => this.handleSaveUser());
     this.userForm.addEventListener("submit", (event) => {
       event.preventDefault();
       this.handleSaveUser();
     });
+
+    this.checkBoxOutletAll.addEventListener("change", () =>
+      this.handleCheckAll(this.checkBoxOutletAll, this.outletForm)
+    );
+    this.buttonSaveOutlet.addEventListener("click", () =>
+      this.handleSaveOutletUser()
+    );
+    this.outletForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      this.handleSaveOutletUser();
+    });
+  }
+
+  handleCheckAll(checkbox, form) {
+    const isChecked = checkbox.checked;
+    form
+      .querySelectorAll('input[name="outlet_id[]"]')
+      .forEach((checkbox) => (checkbox.checked = isChecked));
   }
 
   handleSearch() {
@@ -86,10 +122,17 @@ class UserTableManager {
     // Add click event listeners to edit buttons
     this.tbody.querySelectorAll("button.btn-edit").forEach((button, index) => {
       button.addEventListener("click", () => {
-        console.log("Edit user:", users[index]);
         this.handleEditUser(users[index]);
       });
     });
+
+    this.tbody
+      .querySelectorAll("button.btn-edit-outlet")
+      .forEach((button, index) => {
+        button.addEventListener("click", () => {
+          this.handleEdiOutlettUser(users[index]);
+        });
+      });
   }
 
   createUserRow(user, key) {
@@ -100,9 +143,10 @@ class UserTableManager {
         <td>${rowNo}</td>
         <td>${user.name}</td>
         <td>${user.username}</td>
-        <td>${user.role}</td>
         <td>
           <button class="btn btn-primary btn-edit">Edit</button>
+          <button class="btn btn-primary btn-edit-outlet">Outlet</button>
+          <button class="btn btn-primary btn-edit-menu">Menu</button>
         </td>
       </tr>
     `;
@@ -194,6 +238,10 @@ class UserTableManager {
   handleAddUser() {
     const modalBody = this.modalUsers._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
+    const checkBoxOutlet = modalBody.querySelector("#checkbox-outlet");
+    const outletIdCheckbox = modalBody.querySelectorAll(
+      'input[name="outlet_id[]"]'
+    );
 
     //set value
     idInput.value = "";
@@ -203,6 +251,12 @@ class UserTableManager {
       .querySelector('input[name="password"]')
       .setAttribute("required", "true");
     modalBody.querySelector('label[for="password"]').classList.add("required");
+
+    //show checkbox outlet
+    checkBoxOutlet.style.display = "block";
+    this.checkBoxUserOutletAll.checked = false;
+    //set checked checkbox to false
+    outletIdCheckbox.forEach((checkbox) => (checkbox.checked = false));
 
     //show modal
     this.modalUsers.show();
@@ -221,6 +275,7 @@ class UserTableManager {
     const idInput = modalBody.querySelector('input[name="id"]');
     const nameInput = modalBody.querySelector('input[name="name"]');
     const usernameInput = modalBody.querySelector('input[name="username"]');
+    const checkBoxOutlet = modalBody.querySelector("#checkbox-outlet");
     //set value
     idInput.value = user.id;
     nameInput.value = user.name;
@@ -234,6 +289,9 @@ class UserTableManager {
       .querySelector('label[for="password"]')
       .classList.remove("required");
 
+    //hide checkbox outlet
+    checkBoxOutlet.style.display = "none";
+
     //show modal
     this.modalUsers.show();
 
@@ -246,10 +304,44 @@ class UserTableManager {
     }, 200);
   }
 
+  handleEdiOutlettUser(user) {
+    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+    const userIdInput = modalBody.querySelector('input[name="user_id"]');
+    const nameInput = modalBody.querySelector('input[name="name"]');
+    const outletIdCheckbox = modalBody.querySelectorAll(
+      'input[name="outlet_id[]"]'
+    );
+
+    //set value
+    userIdInput.value = user.id;
+    nameInput.value = user.name;
+    //clear all checkbox
+    this.checkBoxOutletAll.checked = false;
+    outletIdCheckbox.forEach((checkbox) => (checkbox.checked = false));
+    const outletIds = user.outlet_user
+      ? user.outlet_user.map((outlet) => outlet.outlet_id)
+      : [];
+    //set checked checkbox
+    outletIds.forEach((outletId) => {
+      const checkbox = modalBody.querySelector(
+        `input[name="outlet_id[]"][value="${outletId}"]`
+      );
+      if (checkbox) checkbox.checked = true;
+    });
+    //show modal
+    this.modalOutlets.show();
+  }
+
   async handleSaveUser() {
-    if (!this.validateForm()) return;
+    if (!this.validateForm(this.userForm)) return;
 
     const formData = this.getFormData();
+    if (!formData.id) {
+      if (!this.validateCheckboxes(this.userForm, "outlet_id[]")) return;
+      formData.outlet_id = Array.from(
+        this.userForm.querySelectorAll(`input[name="outlet_id[]"]:checked`)
+      ).map((checkbox) => checkbox.value);
+    }
     const url = formData.id ? "/admin/put" : "/admin/store";
 
     const modalBody = this.modalUsers._element.querySelector(".modal-body");
@@ -269,10 +361,49 @@ class UserTableManager {
     }
   }
 
-  validateForm() {
-    return (
-      this.userForm.checkValidity() || (this.userForm.reportValidity(), false)
+  async handleSaveOutletUser() {
+    if (!this.validateForm(this.outletForm)) return;
+    if (!this.validateCheckboxes(this.outletForm)) return;
+
+    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+    const inputs = {
+      user_id: modalBody.querySelector('input[name="user_id"]').value,
+      outlet_id: Array.from(
+        modalBody.querySelectorAll(`input[name="outlet_id[]"]:checked`)
+      ).map((checkbox) => checkbox.value),
+    };
+
+    const url = "/admin/store-outlet";
+
+    const response = await submitForm(url, inputs);
+
+    if (response.ok) {
+      this.modalOutlets.hide();
+      showToast("Outlet saved successfully");
+      this.fetchUsers();
+    } else {
+      const data = await response.json();
+      if (data.message) {
+        showToast(`Error save outlet: ${data.message}`, "error");
+      }
+    }
+  }
+
+  validateCheckboxes(form, checkboxName = "outlet_id[]") {
+    const checkboxes = form.querySelectorAll(`input[name="${checkboxName}"]`);
+    const isChecked = Array.from(checkboxes).some(
+      (checkbox) => checkbox.checked
     );
+
+    if (!isChecked) {
+      showToast("Please select at least one option", "error");
+    }
+
+    return isChecked;
+  }
+
+  validateForm(form) {
+    return form.checkValidity() || (form.reportValidity(), false);
   }
 
   getFormData() {
