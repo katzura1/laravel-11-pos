@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\User\AdminController;
 use App\Http\Controllers\User\CashierController;
@@ -29,6 +30,15 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     //outlet mapping
     Route::post('store-outlet', [AdminController::class,'storeOutlet'])->name('admin.storeOutlet');
+});
+
+Route::prefix('menu')->middleware(['auth'])->group(function () {
+    Route::get('/', [MenuController::class,'index'])->name('outlet.index');
+    Route::get('/get', [MenuController::class,'getMenus'])->name('outlet.getMenus');
+    Route::get('/get-parents', [MenuController::class,'getParents'])->name('outlet.getParents');
+    Route::post('/store', [MenuController::class,'store'])->name('outlet.store');
+    Route::put('/put', [MenuController::class,'update'])->name('outlet.update');
+    Route::delete('/destroy', [MenuController::class,'destroy'])->name('admin.destroy');
 });
 
 Route::prefix('cashier')->middleware(['auth'])->group(function () {
