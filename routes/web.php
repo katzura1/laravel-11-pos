@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\SubBrandController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\User\AdminController;
@@ -90,4 +91,12 @@ Route::prefix('sub-brand')->middleware(['auth'])->group(function () {
     Route::post('/store', [SubBrandController::class,'store'])->name('sub-brand.store');
     Route::put('/put', [SubBrandController::class,'update'])->name('sub-brand.update');
     Route::delete('/destroy', [SubBrandController::class,'destroy'])->name('sub-brand.destroy');
+});
+
+Route::prefix('product-category')->middleware(['auth'])->group(function () {
+    Route::get('/', [ProductCategoryController::class,'index'])->name('product-category.index');
+    Route::get('/get', [ProductCategoryController::class,'getProductCategorys'])->name('product-category.getProductCategorys');
+    Route::post('/store', [ProductCategoryController::class,'store'])->name('product-category.store');
+    Route::put('/put', [ProductCategoryController::class,'update'])->name('product-category.update');
+    Route::delete('/destroy', [ProductCategoryController::class,'destroy'])->name('product-category.destroy');
 });

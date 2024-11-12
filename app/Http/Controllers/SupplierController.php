@@ -42,30 +42,30 @@ class SupplierController extends Controller
                 'status' => true,
                 'message' => 'Supplier created successfully'
             ], 201);
-        }, 'Failed to create outlet');
+        }, 'Failed to create supplier');
     }
 
     public function update(UpdateRequest $request): JsonResponse
     {
         return $this->handleTransaction(function () use ($request) {
-            $outlet = Supplier::findOrFail($request->input('id'));
-            $outlet->update($request->validated());
+            $supplier = Supplier::findOrFail($request->input('id'));
+            $supplier->update($request->validated());
             return response()->json([
                 'status' => true,
                 'message' => 'Supplier updated successfully'
             ], 200);
-        }, 'Failed to update outlet');
+        }, 'Failed to update supplier');
     }
 
     public function destroy(DestroyRequest $request): JsonResponse
     {
         return $this->handleTransaction(function () use ($request) {
-            $outlet = Supplier::findOrFail($request->input('id'));
-            $outlet->delete();
+            $supplier = Supplier::findOrFail($request->input('id'));
+            $supplier->delete();
             return response()->json([
                 'status' => true,
                 'message' => 'Supplier deleted successfully'
             ], 200);
-        }, 'Failed to delete outlet');
+        }, 'Failed to delete supplier');
     }
 }
