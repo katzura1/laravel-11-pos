@@ -43,7 +43,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal modal-blur fade" id="modal-outlets" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal modal-blur" id="modal-outlets" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">

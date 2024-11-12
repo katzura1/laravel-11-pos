@@ -44,7 +44,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal modal-blur fade" id="modal-users" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal modal-blur" id="modal-users" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -58,15 +58,15 @@
               <input type="hidden" name="id">
               <div class="mb-3">
                 <label class="form-label required" for="name">Nama</label>
-                <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128">
+                <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128" required>
               </div>
               <div class="mb-3">
                 <label class="form-label required" for="username">Username</label>
-                <input type="text" class="form-control" name="username" placeholder="Input Username" maxlength="128">
+                <input type="text" class="form-control" name="username" placeholder="Input Username" maxlength="128" required>
               </div>
               <div class="mb-3">
                 <label class="form-label required" for="password">Password</label>
-                <input type="text" class="form-control" name="password" placeholder="Input Password" maxlength="25">
+                <input type="text" class="form-control" name="password" placeholder="Input Password" maxlength="25" required>
               </div>
               <div class="mb-3" id="checkbox-outlet">
                 <div class="d-flex gap-4">
@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <div class="modal modal-blur fade" id="modal-outlets" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal modal-blur" id="modal-outlets" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">

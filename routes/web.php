@@ -21,7 +21,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::prefix('admin')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->middleware([])->group(function () {
     Route::get('/', [AdminController::class,'index'])->name('admin.index');
     Route::get('/get', [AdminController::class,'getAdmins'])->name('admin.getAdmins');
     Route::post('/store', [AdminController::class,'store'])->name('admin.store');
@@ -39,7 +39,7 @@ Route::prefix('cashier')->middleware(['auth'])->group(function () {
     // Route::delete('/admins/{id}', [CashierController::class,'destroy'])->name('admin.destroy');
 });
 
-Route::prefix('outlet')->middleware(['auth'])->group(function () {
+Route::prefix('outlet')->middleware([])->group(function () {
     Route::get('/', [OutletController::class,'index'])->name('outlet.index');
     Route::get('/get', [OutletController::class,'getOutlets'])->name('outlet.getOutlets');
     Route::post('/store', [OutletController::class,'store'])->name('outlet.store');

@@ -20,6 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       confirmationModal.show();
+
+      setTimeout(() => {
+        confirmButton.focus();
+      }, 200);
     };
   }
 

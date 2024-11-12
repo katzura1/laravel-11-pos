@@ -120,9 +120,10 @@ class SupplierTableManager {
   }
 
   createEmptyRow() {
+    const countTh = this.table.querySelectorAll("thead th").length;
     return `
       <tr>
-        <td colspan="5" class="text-center">No suppliers found</td>
+        <td colspan="${countTh}" class="text-center">No suppliers found</td>
       </tr>
     `;
   }
