@@ -5,3 +5,23 @@
 .table tbody tr td {
   vertical-align: middle;
 }
+
+.sortable {
+  cursor: pointer;
+}
+
+.sortable::after {
+  content: " \25B2\25BC";
+  font-size: 0.8em;
+  color: #ccc;
+}
+
+.sort-asc::after {
+  content: " \25B2";
+  color: #000;
+}
+
+.sort-desc::after {
+  content: " \25BC";
+  color: #000;
+}

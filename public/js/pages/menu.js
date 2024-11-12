@@ -155,9 +155,10 @@ class MenuTableManager {
   }
 
   createEmptyRow() {
+    const countTh = this.table.querySelectorAll("thead th").length;
     return `
       <tr>
-        <td colspan="5" class="text-center">No menus found</td>
+        <td colspan="${countTh}" class="text-center">No menu found</td>
       </tr>
     `;
   }
