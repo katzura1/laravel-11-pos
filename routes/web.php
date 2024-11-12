@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\SubBrandController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\User\AdminController;
 use App\Http\Controllers\User\CashierController;
@@ -71,4 +73,21 @@ Route::prefix('customer')->middleware(['auth'])->group(function () {
     Route::post('/store', [CustomerController::class,'store'])->name('customer.store');
     Route::put('/put', [CustomerController::class,'update'])->name('customer.update');
     Route::delete('/destroy', [CustomerController::class,'destroy'])->name('customer.destroy');
+});
+
+Route::prefix('brand')->middleware(['auth'])->group(function () {
+    Route::get('/', [BrandController::class,'index'])->name('brand.index');
+    Route::get('/get', [BrandController::class,'getBrands'])->name('brand.getBrands');
+    Route::post('/store', [BrandController::class,'store'])->name('brand.store');
+    Route::put('/put', [BrandController::class,'update'])->name('brand.update');
+    Route::delete('/destroy', [BrandController::class,'destroy'])->name('brand.destroy');
+});
+
+Route::prefix('sub-brand')->middleware(['auth'])->group(function () {
+    Route::get('/', [SubBrandController::class,'index'])->name('sub-brand.index');
+    Route::get('/get', [SubBrandController::class,'getSubBrands'])->name('sub-brand.getSubBrands');
+    Route::get('/get-brands', [SubBrandController::class,'getBrands'])->name('sub-brand.getBrands');
+    Route::post('/store', [SubBrandController::class,'store'])->name('sub-brand.store');
+    Route::put('/put', [SubBrandController::class,'update'])->name('sub-brand.update');
+    Route::delete('/destroy', [SubBrandController::class,'destroy'])->name('sub-brand.destroy');
 });

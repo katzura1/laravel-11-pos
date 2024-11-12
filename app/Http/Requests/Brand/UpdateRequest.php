@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Customer;
+namespace App\Http\Requests\Brand;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,10 +22,8 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:150'],
-            'identity_number' => ['required', 'string', 'size:16', 'unique:customers,identity_number,' . $this->input('id')],
-            'phone_number' => ['required', 'string','min:10' ,'max:16','regex:/^(?:\+62|62|0)[0-9]{9,}$/', 'unique:customers,phone_number,' . $this->input('id')],
-            'birth_date' => ['required', 'date'],
+            'id' => ['required', 'integer', 'exists:brands,id'],
+            'name' => ['required', 'string', 'unique:brands,name,'.$this->id, 'max:128'],
         ];
     }
 }

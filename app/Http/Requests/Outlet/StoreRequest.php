@@ -11,7 +11,7 @@ class StoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()?->role === 'admin';
+        return true;
     }
 
     /**
@@ -23,6 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string',  'max:80','unique:outlets,name'],
+            'default_faktur_pajak' => ['required', 'in:true,false'],
         ];
     }
 }

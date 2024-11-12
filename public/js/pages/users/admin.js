@@ -153,9 +153,10 @@ class UserTableManager {
   }
 
   createEmptyRow() {
+    const countTh = this.table.querySelectorAll("thead th").length;
     return `
       <tr>
-        <td colspan="5" class="text-center">No users found</td>
+        <td colspan="${countTh}" class="text-center">No users found</td>
       </tr>
     `;
   }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Supplier;
+namespace App\Http\Requests\Brand;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRequest extends FormRequest
+class StoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string','max:80', 'unique:suppliers,name,' . $this->input('id')],
+            'name' => ['required', 'string' ,'unique:brands,name', 'max:128'],
         ];
     }
 }

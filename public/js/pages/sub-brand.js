@@ -1,23 +1,23 @@
-class SupplierTableManager {
+class SubBrandTableManager {
   constructor() {
     this.searchInput = document.getElementById("search");
     this.pageLengthSelect = document.getElementById("page-length");
     this.loading = document.getElementById("loading");
-    this.table = document.getElementById("suppliers-table");
-    this.tbody = document.querySelector("#suppliers-table tbody");
+    this.table = document.getElementById("sub-brands-table");
+    this.tbody = document.querySelector("#sub-brands-table tbody");
     this.pagination = document.getElementById("pagination");
     this.currentPage = 1;
-    this.modalSuppliers = new bootstrap.Modal(
-      document.getElementById("modal-suppliers")
+    this.modalSubBrands = new bootstrap.Modal(
+      document.getElementById("modal-sub-brands")
     );
     this.buttonAdd = document.getElementById("btn-add");
-    this.supplierForm = document.getElementById("supplier-form");
-    this.buttonSave = this.modalSuppliers._element.querySelector(
+    this.subBrandForm = document.getElementById("sub-brand-form");
+    this.buttonSave = this.modalSubBrands._element.querySelector(
       ".modal-footer button#btn-save"
     );
 
     this.initializeEventListeners();
-    this.fetchSuppliers();
+    this.fetchSubBrands();
   }
 
   initializeEventListeners() {
@@ -25,11 +25,11 @@ class SupplierTableManager {
     this.pageLengthSelect.addEventListener("change", () =>
       this.handlePageLengthChange()
     );
-    this.buttonAdd.addEventListener("click", () => this.handleAddSupplier());
-    this.buttonSave.addEventListener("click", () => this.handleSaveSupplier());
-    this.supplierForm.addEventListener("submit", (event) => {
+    this.buttonAdd.addEventListener("click", () => this.handleAddSubBrand());
+    this.buttonSave.addEventListener("click", () => this.handleSaveSubBrand());
+    this.subBrandForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      this.handleSaveSupplier();
+      this.handleSaveSubBrand();
     });
   }
 
@@ -40,16 +40,16 @@ class SupplierTableManager {
 
     this.searchTimeout = setTimeout(() => {
       this.currentPage = 1;
-      this.fetchSuppliers();
+      this.fetchSubBrands();
     }, 200);
   }
 
   handlePageLengthChange() {
     this.currentPage = 1;
-    this.fetchSuppliers();
+    this.fetchSubBrands();
   }
 
-  async fetchSuppliers() {
+  async fetchSubBrands() {
     try {
       this.showLoading();
       const response = await fetch(this.buildUrl(), {
@@ -63,7 +63,7 @@ class SupplierTableManager {
       this.renderTable(data.data);
       this.renderPagination(data);
     } catch (error) {
-      console.error("Error fetching suppliers:", error);
+      console.error("Error fetching sub-brands:", error);
     } finally {
       this.hideLoading();
     }
@@ -75,21 +75,20 @@ class SupplierTableManager {
       length: this.pageLengthSelect.value,
       search: this.searchInput.value,
     });
-    return `/supplier/get?${params.toString()}`;
+    return `/sub-brand/get?${params.toString()}`;
   }
 
-  renderTable(suppliers) {
-    this.tbody.innerHTML = suppliers.length
-      ? suppliers
-          .map((supplier, key) => this.createSupplierRow(supplier, key))
+  renderTable(subBrands) {
+    this.tbody.innerHTML = subBrands.length
+      ? subBrands
+          .map((subBrand, key) => this.createSubBrandRow(subBrand, key))
           .join("")
       : this.createEmptyRow();
 
     // Add click event listeners to edit buttons
     this.tbody.querySelectorAll("button.btn-edit").forEach((button, index) => {
       button.addEventListener("click", () => {
-        // console.log("Edit supplier:", suppliers[index]);
-        this.handleEditSupplier(suppliers[index]);
+        this.handleEditSubBrand(subBrands[index]);
       });
     });
 
@@ -98,19 +97,18 @@ class SupplierTableManager {
       .querySelectorAll("button.btn-delete")
       .forEach((button, index) => {
         button.addEventListener("click", () => {
-          // console.log("Delete supplier:", suppliers[index]);
-          this.handleDeleteSupplier(suppliers[index]);
+          this.handleDeleteSubBrand(subBrands[index]);
         });
       });
   }
 
-  createSupplierRow(supplier, key) {
+  createSubBrandRow(subBrand, key) {
     const rowNo =
       (this.currentPage - 1) * parseInt(this.pageLengthSelect.value) + key + 1;
     return `
       <tr>
         <td>${rowNo}</td>
-        <td>${supplier.name}</td>
+        <td>${subBrand.name}</td>
         <td>
           <button class="btn btn-primary btn-edit">Edit</button>
           <button class="btn btn-danger btn-delete">Delete</button>
@@ -123,7 +121,7 @@ class SupplierTableManager {
     const countTh = this.table.querySelectorAll("thead th").length;
     return `
       <tr>
-        <td colspan="${countTh}" class="text-center">No suppliers found</td>
+        <td colspan="${countTh}" class="text-center">No sub-brands found</td>
       </tr>
     `;
   }
@@ -198,20 +196,20 @@ class SupplierTableManager {
       link.addEventListener("click", (event) => {
         event.preventDefault();
         this.currentPage = parseInt(event.target.getAttribute("data-page"));
-        this.fetchSuppliers();
+        this.fetchSubBrands();
       });
     });
   }
 
-  handleAddSupplier() {
-    const modalBody = this.modalSuppliers._element.querySelector(".modal-body");
+  handleAddSubBrand() {
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
 
     //set value
     idInput.value = "";
 
     //show modal
-    this.modalSuppliers.show();
+    this.modalSubBrands.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -222,16 +220,16 @@ class SupplierTableManager {
     }, 200);
   }
 
-  handleEditSupplier(supplier) {
-    const modalBody = this.modalSuppliers._element.querySelector(".modal-body");
+  handleEditSubBrand(subBrand) {
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
     const nameInput = modalBody.querySelector('input[name="name"]');
     //set value
-    idInput.value = supplier.id;
-    nameInput.value = supplier.name;
+    idInput.value = subBrand.id;
+    nameInput.value = subBrand.name;
 
     //show modal
-    this.modalSuppliers.show();
+    this.modalSubBrands.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -242,22 +240,22 @@ class SupplierTableManager {
     }, 200);
   }
 
-  handleDeleteSupplier(supplier) {
+  handleDeleteSubBrand(subBrand) {
     showConfirmationDialog(
-      `Are you sure you want to delete ${supplier.name}?`,
-      () => this.deleteSupplier(supplier.id)
+      `Are you sure you want to delete ${subBrand.name}?`,
+      () => this.deleteSubBrand(subBrand.id)
     );
   }
 
-  async deleteSupplier(supplierId) {
+  async deleteSubBrand(subBrandId) {
     try {
-      const url = `/supplier/destroy`;
+      const url = `/subBrand/destroy`;
       const csrfToken = document.querySelector(
         'meta[name="csrf-token"]'
       ).content;
 
       const data = {
-        id: supplierId,
+        id: subBrandId,
         _token: csrfToken,
         _method: "DELETE",
       };
@@ -270,17 +268,17 @@ class SupplierTableManager {
         await this.handleDeleteError(response);
       }
     } catch (error) {
-      console.error("Error deleting supplier:", error);
+      console.error("Error deleting subBrand:", error);
     }
   }
 
-  async handleSaveSupplier() {
-    if (!validateForm(this.supplierForm)) return;
+  async handleSaveSubBrand() {
+    if (!validateForm(this.subBrandForm)) return;
 
     const formData = this.getFormData();
-    const url = formData.id ? "/supplier/put" : "/supplier/store";
+    const url = formData.id ? "/subBrand/put" : "/subBrand/store";
 
-    const modalBody = this.modalSuppliers._element.querySelector(".modal-body");
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     clearValidationErrors(modalBody);
     this.buttonSave.disabled = true;
 
@@ -298,7 +296,7 @@ class SupplierTableManager {
   }
 
   getFormData() {
-    const modalBody = this.modalSuppliers._element.querySelector(".modal-body");
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const inputs = {
       id: modalBody.querySelector('input[name="id"]').value,
       name: modalBody.querySelector('input[name="name"]').value,
@@ -312,20 +310,20 @@ class SupplierTableManager {
   }
 
   async handleSuccessfulSave() {
-    this.modalSuppliers.hide();
-    this.fetchSuppliers();
+    this.modalSubBrands.hide();
+    this.fetchSubBrands();
     this.resetForm();
-    showToast("Supplier saved successfully");
+    showToast("SubBrand saved successfully");
   }
 
   async handleSuccessfulDelete() {
-    this.fetchSuppliers();
-    showToast("Supplier saved deleted");
+    this.fetchSubBrands();
+    showToast("SubBrand saved deleted");
   }
 
   resetForm() {
     const inputs =
-      this.modalSuppliers._element.querySelectorAll(".modal-body input");
+      this.modalSubBrands._element.querySelectorAll(".modal-body input");
     inputs.forEach((input) => (input.value = ""));
   }
 
@@ -334,14 +332,14 @@ class SupplierTableManager {
 
     if (data.message) {
       showToast(
-        `Failed save supplier: ${data.message ?? "Unknown error"}`,
+        `Failed save subBrand: ${data.message ?? "Unknown error"}`,
         "error"
       );
     }
 
     if (data.errors) {
       const modalBody =
-        this.modalSuppliers._element.querySelector(".modal-body");
+        this.modalSubBrands._element.querySelector(".modal-body");
       displayValidationErrors(modalBody, data.errors);
     }
   }
@@ -351,7 +349,7 @@ class SupplierTableManager {
 
     if (data.message) {
       showToast(
-        `Failed delete supplier: ${data.message ?? "Unknown error"}`,
+        `Failed delete subBrand: ${data.message ?? "Unknown error"}`,
         "error"
       );
     }
@@ -368,4 +366,4 @@ class SupplierTableManager {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => new SupplierTableManager());
+document.addEventListener("DOMContentLoaded", () => new SubBrandTableManager());

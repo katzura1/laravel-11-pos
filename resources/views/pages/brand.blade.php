@@ -13,19 +13,18 @@
                       <option value="50">50 Page</option>
                       <option value="100">100 Page</option>
                   </select>
-                  <button class="btn btn-primary" id="btn-add">Add Outlet</button>
+                  <button class="btn btn-primary" id="btn-add">Add Brand</button>
               </div>
               <div class="col-md-4">
                   <input type="text" id="search" class="form-control" placeholder="Search...">
               </div>
             </div>
             <div id="loading" style="display: none;">Loading...</div>
-            <table id="outlets-table" class="table">
+            <table id="brands-table" class="table">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Name</th>
-                        <th>Defatult Faktur Pajak</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -44,33 +43,20 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal modal-blur" id="modal-outlets" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal modal-blur" id="modal-brands" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Form Data Outlet</h5>
+            <h5 class="modal-title">Form Data Brand</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form method="POST" id="outlet-form">
+            <form method="POST" id="brand-form">
               @csrf
               <input type="hidden" name="id">
               <div class="mb-3">
                 <label class="form-label required" for="name">Nama</label>
                 <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128" required>
-              </div>
-              <div class="mb-3">
-                <div class="form-label">Default Faktur Pajak</div>
-                <div>
-                  <label class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="default_faktur_pajak" value="true" checked="">
-                    <span class="form-check-label">Ya</span>
-                  </label>
-                  <label class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="default_faktur_pajak" value="false">
-                    <span class="form-check-label">Tidak</span>
-                  </label>
-                </div>
               </div>
             </form>
           </div>
@@ -84,5 +70,5 @@
 @endsection 
 
 @push('after-js')
-<script src="/js/pages/outlet.js"></script>
+<script src="/js/pages/brand.js"></script>
 @endpush

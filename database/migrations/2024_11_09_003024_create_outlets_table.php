@@ -13,6 +13,7 @@ return new class () extends Migration {
         Schema::create('outlets', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80)->unique();
+            $table->boolean('default_faktur_pajak')->default(false);
             $table->timestamps();
         });
 
@@ -29,7 +30,7 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('outlets');
         Schema::dropIfExists('outlet_users');
+        Schema::dropIfExists('outlets');
     }
 };
