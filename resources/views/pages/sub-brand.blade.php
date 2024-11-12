@@ -58,6 +58,10 @@
                 <label class="form-label required" for="name">Nama</label>
                 <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128" required>
               </div>
+              <div class="mb-3">
+                <label class="form-label required" for="brand_id">Brand</label>
+                <select class="form-select" name="brand_id" id="brand_id" required></select>
+              </div>
             </form>
           </div>
           <div class="modal-footer">

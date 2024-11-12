@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\SubBrand;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -16,10 +17,10 @@ class SubBrandController extends Controller
 {
     public function index(Request $request): View
     {
-        Meta::prependTitle('SubBrand');
+        Meta::prependTitle('Sub Brand');
         return view("pages.sub-brand", [
-            'title' => 'SubBrand',
-            'subtitle' => 'Kelola data SubBrand',
+            'title' => 'Sub Brand',
+            'subtitle' => 'Kelola data Sub Brand',
         ]);
     }
 
@@ -58,9 +59,9 @@ class SubBrandController extends Controller
             SubBrand::create($validated);
             return response()->json([
                 'status' => true,
-                'message' => 'SubBrand created successfully'
+                'message' => 'Sub Brand created successfully'
             ], 201);
-        }, 'Failed to create SubBrand');
+        }, 'Failed to create Sub Brand');
     }
 
     public function update(UpdateRequest $request): JsonResponse
@@ -71,9 +72,9 @@ class SubBrandController extends Controller
             $SubBrand->update($validated);
             return response()->json([
                 'status' => true,
-                'message' => 'SubBrand updated successfully'
+                'message' => 'Sub Brand updated successfully'
             ], 200);
-        }, 'Failed to update SubBrand');
+        }, 'Failed to update Sub Brand');
     }
 
     public function destroy(DestroyRequest $request): JsonResponse
@@ -83,8 +84,8 @@ class SubBrandController extends Controller
             $SubBrand->delete();
             return response()->json([
                 'status' => true,
-                'message' => 'SubBrand deleted successfully'
+                'message' => 'Sub Brand deleted successfully'
             ], 200);
-        }, 'Failed to delete SubBrand');
+        }, 'Failed to delete Sub Brand');
     }
 }

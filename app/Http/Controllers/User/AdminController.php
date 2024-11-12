@@ -75,10 +75,10 @@ class AdminController extends Controller
     public function update(UpdateRequest $request): JsonResponse
     {
         return $this->handleTransaction(function () use ($request) {
-            $user = User::findOrFail($request->user_id);
+            $user = User::findOrFail($request->id);
             $validated = $request->safe()->except('password');
             if ($request->has('password')) {
-                $validated['password'] = Hash::make($validated['password']);
+                $validated['password'] = Hash::make($request->password);
             }
             $user->update($validated);
             return response()->json([

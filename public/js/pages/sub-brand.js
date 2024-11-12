@@ -25,7 +25,10 @@ class SubBrandTableManager {
     this.pageLengthSelect.addEventListener("change", () =>
       this.handlePageLengthChange()
     );
-    this.buttonAdd.addEventListener("click", () => this.handleAddSubBrand());
+    this.buttonAdd.addEventListener(
+      "click",
+      async () => await this.handleAddSubBrand()
+    );
     this.buttonSave.addEventListener("click", () => this.handleSaveSubBrand());
     this.subBrandForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -69,6 +72,38 @@ class SubBrandTableManager {
     }
   }
 
+  async renderSelectBrand() {
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
+    const selectBrand = modalBody.querySelector('select[name="brand_id"]');
+    const brands = await this.fetchBrands();
+
+    // Clear existing options
+    selectBrand.innerHTML = "";
+    selectBrand.add(new Option("Select Brand", ""));
+    brands.forEach((brand) => {
+      selectBrand.add(new Option(brand.name, brand.id));
+    });
+  }
+
+  async fetchBrands() {
+    const url = `/sub-brand/get-brands`;
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      showToast("Error fetching brands", "error");
+      return [];
+    }
+  }
+
   buildUrl() {
     const params = new URLSearchParams({
       page: this.currentPage,
@@ -87,8 +122,8 @@ class SubBrandTableManager {
 
     // Add click event listeners to edit buttons
     this.tbody.querySelectorAll("button.btn-edit").forEach((button, index) => {
-      button.addEventListener("click", () => {
-        this.handleEditSubBrand(subBrands[index]);
+      button.addEventListener("click", async () => {
+        await this.handleEditSubBrand(subBrands[index]);
       });
     });
 
@@ -201,12 +236,15 @@ class SubBrandTableManager {
     });
   }
 
-  handleAddSubBrand() {
+  async handleAddSubBrand() {
     const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
 
     //set value
     idInput.value = "";
+
+    //refresh select brand
+    await this.renderSelectBrand();
 
     //show modal
     this.modalSubBrands.show();
@@ -220,13 +258,19 @@ class SubBrandTableManager {
     }, 200);
   }
 
-  handleEditSubBrand(subBrand) {
+  async handleEditSubBrand(subBrand) {
     const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
     const nameInput = modalBody.querySelector('input[name="name"]');
+    const idBrandSelect = modalBody.querySelector('select[name="brand_id"]');
+
+    //refresh select brand
+    await this.renderSelectBrand();
+
     //set value
     idInput.value = subBrand.id;
     nameInput.value = subBrand.name;
+    idBrandSelect.value = subBrand.brand_id;
 
     //show modal
     this.modalSubBrands.show();
@@ -249,7 +293,7 @@ class SubBrandTableManager {
 
   async deleteSubBrand(subBrandId) {
     try {
-      const url = `/subBrand/destroy`;
+      const url = `/sub-brand/destroy`;
       const csrfToken = document.querySelector(
         'meta[name="csrf-token"]'
       ).content;
@@ -276,7 +320,7 @@ class SubBrandTableManager {
     if (!validateForm(this.subBrandForm)) return;
 
     const formData = this.getFormData();
-    const url = formData.id ? "/subBrand/put" : "/subBrand/store";
+    const url = formData.id ? "/sub-brand/put" : "/sub-brand/store";
 
     const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     clearValidationErrors(modalBody);
@@ -300,6 +344,7 @@ class SubBrandTableManager {
     const inputs = {
       id: modalBody.querySelector('input[name="id"]').value,
       name: modalBody.querySelector('input[name="name"]').value,
+      brand_id: modalBody.querySelector('select[name="brand_id"]').value,
       _token: document.querySelector('meta[name="csrf-token"]').content,
       _method: modalBody.querySelector('input[name="id"]').value
         ? "PUT"
@@ -313,12 +358,12 @@ class SubBrandTableManager {
     this.modalSubBrands.hide();
     this.fetchSubBrands();
     this.resetForm();
-    showToast("SubBrand saved successfully");
+    showToast("Sub Brand saved successfully");
   }
 
   async handleSuccessfulDelete() {
     this.fetchSubBrands();
-    showToast("SubBrand saved deleted");
+    showToast("Sub Brand saved deleted");
   }
 
   resetForm() {
@@ -332,7 +377,7 @@ class SubBrandTableManager {
 
     if (data.message) {
       showToast(
-        `Failed save subBrand: ${data.message ?? "Unknown error"}`,
+        `Failed save sub Brand: ${data.message ?? "Unknown error"}`,
         "error"
       );
     }
@@ -349,7 +394,7 @@ class SubBrandTableManager {
 
     if (data.message) {
       showToast(
-        `Failed delete subBrand: ${data.message ?? "Unknown error"}`,
+        `Failed delete sub Brand: ${data.message ?? "Unknown error"}`,
         "error"
       );
     }

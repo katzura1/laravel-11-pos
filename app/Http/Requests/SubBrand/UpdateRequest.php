@@ -11,7 +11,7 @@ class UpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id' => ['required', 'exists:sub_brands,id'],
+            'name' => ['required','string','unique:sub_brands,name,'.$this->id],
+            'brand_id' => ['required','exists:brands,id'],
         ];
     }
 }
