@@ -38,7 +38,9 @@ class OutletController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         return $this->handleTransaction(function () use ($request) {
-            Outlet::create($request->validated());
+            $validated = $request->validated();
+            $validated['default_faktur_pajak'] = $request->input('default_faktur_pajak') === 'true';
+            Outlet::create($validated);
             return response()->json([
                 'status' => true,
                 'message' => 'Outlet created successfully'
@@ -50,7 +52,9 @@ class OutletController extends Controller
     {
         return $this->handleTransaction(function () use ($request) {
             $outlet = Outlet::findOrFail($request->input('id'));
-            $outlet->update($request->validated());
+            $validated = $request->validated();
+            $validated['default_faktur_pajak'] = $request->input('default_faktur_pajak') === 'true';
+            $outlet->update($validated);
             return response()->json([
                 'status' => true,
                 'message' => 'Outlet updated successfully'

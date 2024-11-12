@@ -23,6 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string',  'max:80','unique:outlets,name'],
+            'default_faktur_pajak' => ['required', 'in:true,false'],
         ];
     }
 }

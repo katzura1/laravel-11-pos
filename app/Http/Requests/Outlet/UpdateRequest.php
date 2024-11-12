@@ -23,6 +23,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string','max:80', 'unique:outlets,name,' . $this->input('id')],
+            'default_faktur_pajak' => ['required', 'in:true,false'],
         ];
     }
 }

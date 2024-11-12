@@ -25,6 +25,7 @@
                     <tr>
                         <th>No</th>
                         <th>Name</th>
+                        <th>Defatult Faktur Pajak</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -57,6 +58,19 @@
               <div class="mb-3">
                 <label class="form-label required" for="name">Nama</label>
                 <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128" required>
+              </div>
+              <div class="mb-3">
+                <div class="form-label">Default Faktur Pajak</div>
+                <div>
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="default_faktur_pajak" value="true" checked="">
+                    <span class="form-check-label">Ya</span>
+                  </label>
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="default_faktur_pajak" value="false">
+                    <span class="form-check-label">Tidak</span>
+                  </label>
+                </div>
               </div>
             </form>
           </div>

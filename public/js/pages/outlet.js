@@ -109,6 +109,7 @@ class OutletTableManager {
       <tr>
         <td>${rowNo}</td>
         <td>${outlet.name}</td>
+        <td>${outlet.default_faktur_pajak ? "Yes" : "No"}</td>
         <td>
           <button class="btn btn-primary btn-edit">Edit</button>
           <button class="btn btn-danger btn-delete">Delete</button>
@@ -224,9 +225,17 @@ class OutletTableManager {
     const modalBody = this.modalOutlets._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
     const nameInput = modalBody.querySelector('input[name="name"]');
+    const defaultFakturPajakInput = modalBody.querySelectorAll(
+      `input[name="default_faktur_pajak"]`
+    );
+
     //set value
     idInput.value = outlet.id;
     nameInput.value = outlet.name;
+    //set default faktur pajak with same value checked
+    defaultFakturPajakInput.forEach(
+      (input) => (input.checked = input.value === outlet.default_faktur_pajak)
+    );
 
     //show modal
     this.modalOutlets.show();
@@ -300,6 +309,9 @@ class OutletTableManager {
     const inputs = {
       id: modalBody.querySelector('input[name="id"]').value,
       name: modalBody.querySelector('input[name="name"]').value,
+      default_faktur_pajak: modalBody.querySelector(
+        'input[name="default_faktur_pajak"]:checked'
+      ).value,
       _token: document.querySelector('meta[name="csrf-token"]').content,
       _method: modalBody.querySelector('input[name="id"]').value
         ? "PUT"
@@ -322,8 +334,9 @@ class OutletTableManager {
   }
 
   resetForm() {
-    const inputs =
-      this.modalOutlets._element.querySelectorAll(".modal-body input");
+    const inputs = this.modalOutlets._element.querySelectorAll(
+      ".modal-body input[type=text], .modal-body select"
+    );
     inputs.forEach((input) => (input.value = ""));
   }
 
