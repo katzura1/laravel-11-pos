@@ -1,23 +1,23 @@
-class OutletTableManager {
+class SubBrandTableManager {
   constructor() {
     this.searchInput = document.getElementById("search");
     this.pageLengthSelect = document.getElementById("page-length");
     this.loading = document.getElementById("loading");
-    this.table = document.getElementById("outlets-table");
-    this.tbody = document.querySelector("#outlets-table tbody");
+    this.table = document.getElementById("sub-brands-table");
+    this.tbody = document.querySelector("#sub-brands-table tbody");
     this.pagination = document.getElementById("pagination");
     this.currentPage = 1;
-    this.modalOutlets = new bootstrap.Modal(
-      document.getElementById("modal-outlets")
+    this.modalSubBrands = new bootstrap.Modal(
+      document.getElementById("modal-sub-brands")
     );
     this.buttonAdd = document.getElementById("btn-add");
-    this.outletForm = document.getElementById("outlet-form");
-    this.buttonSave = this.modalOutlets._element.querySelector(
+    this.subBrandForm = document.getElementById("sub-brand-form");
+    this.buttonSave = this.modalSubBrands._element.querySelector(
       ".modal-footer button#btn-save"
     );
 
     this.initializeEventListeners();
-    this.fetchOutlets();
+    this.fetchSubBrands();
   }
 
   initializeEventListeners() {
@@ -25,11 +25,11 @@ class OutletTableManager {
     this.pageLengthSelect.addEventListener("change", () =>
       this.handlePageLengthChange()
     );
-    this.buttonAdd.addEventListener("click", () => this.handleAddOutlet());
-    this.buttonSave.addEventListener("click", () => this.handleSaveOutlet());
-    this.outletForm.addEventListener("submit", (event) => {
+    this.buttonAdd.addEventListener("click", () => this.handleAddSubBrand());
+    this.buttonSave.addEventListener("click", () => this.handleSaveSubBrand());
+    this.subBrandForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      this.handleSaveOutlet();
+      this.handleSaveSubBrand();
     });
   }
 
@@ -40,16 +40,16 @@ class OutletTableManager {
 
     this.searchTimeout = setTimeout(() => {
       this.currentPage = 1;
-      this.fetchOutlets();
+      this.fetchSubBrands();
     }, 200);
   }
 
   handlePageLengthChange() {
     this.currentPage = 1;
-    this.fetchOutlets();
+    this.fetchSubBrands();
   }
 
-  async fetchOutlets() {
+  async fetchSubBrands() {
     try {
       this.showLoading();
       const response = await fetch(this.buildUrl(), {
@@ -63,7 +63,7 @@ class OutletTableManager {
       this.renderTable(data.data);
       this.renderPagination(data);
     } catch (error) {
-      console.error("Error fetching outlets:", error);
+      console.error("Error fetching sub-brands:", error);
     } finally {
       this.hideLoading();
     }
@@ -75,19 +75,20 @@ class OutletTableManager {
       length: this.pageLengthSelect.value,
       search: this.searchInput.value,
     });
-    return `/outlet/get?${params.toString()}`;
+    return `/sub-brand/get?${params.toString()}`;
   }
 
-  renderTable(outlets) {
-    this.tbody.innerHTML = outlets.length
-      ? outlets.map((outlet, key) => this.createOutletRow(outlet, key)).join("")
+  renderTable(subBrands) {
+    this.tbody.innerHTML = subBrands.length
+      ? subBrands
+          .map((subBrand, key) => this.createSubBrandRow(subBrand, key))
+          .join("")
       : this.createEmptyRow();
 
     // Add click event listeners to edit buttons
     this.tbody.querySelectorAll("button.btn-edit").forEach((button, index) => {
       button.addEventListener("click", () => {
-        // console.log("Edit outlet:", outlets[index]);
-        this.handleEditOutlet(outlets[index]);
+        this.handleEditSubBrand(subBrands[index]);
       });
     });
 
@@ -96,20 +97,18 @@ class OutletTableManager {
       .querySelectorAll("button.btn-delete")
       .forEach((button, index) => {
         button.addEventListener("click", () => {
-          // console.log("Delete outlet:", outlets[index]);
-          this.handleDeleteOutlet(outlets[index]);
+          this.handleDeleteSubBrand(subBrands[index]);
         });
       });
   }
 
-  createOutletRow(outlet, key) {
+  createSubBrandRow(subBrand, key) {
     const rowNo =
       (this.currentPage - 1) * parseInt(this.pageLengthSelect.value) + key + 1;
     return `
       <tr>
         <td>${rowNo}</td>
-        <td>${outlet.name}</td>
-        <td>${outlet.default_faktur_pajak == "true" ? "Yes" : "No"}</td>
+        <td>${subBrand.name}</td>
         <td>
           <button class="btn btn-primary btn-edit">Edit</button>
           <button class="btn btn-danger btn-delete">Delete</button>
@@ -122,7 +121,7 @@ class OutletTableManager {
     const countTh = this.table.querySelectorAll("thead th").length;
     return `
       <tr>
-        <td colspan="${countTh}" class="text-center">No outlets found</td>
+        <td colspan="${countTh}" class="text-center">No sub-brands found</td>
       </tr>
     `;
   }
@@ -197,26 +196,20 @@ class OutletTableManager {
       link.addEventListener("click", (event) => {
         event.preventDefault();
         this.currentPage = parseInt(event.target.getAttribute("data-page"));
-        this.fetchOutlets();
+        this.fetchSubBrands();
       });
     });
   }
 
-  handleAddOutlet() {
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+  handleAddSubBrand() {
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
-    const defaultFakturPajakInput = modalBody.querySelectorAll(
-      `input[name="default_faktur_pajak"]`
-    );
 
     //set value
     idInput.value = "";
-    defaultFakturPajakInput.forEach(
-      (input) => (input.checked = input.value == "true")
-    );
 
     //show modal
-    this.modalOutlets.show();
+    this.modalSubBrands.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -227,24 +220,16 @@ class OutletTableManager {
     }, 200);
   }
 
-  handleEditOutlet(outlet) {
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+  handleEditSubBrand(subBrand) {
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector('input[name="id"]');
     const nameInput = modalBody.querySelector('input[name="name"]');
-    const defaultFakturPajakInput = modalBody.querySelectorAll(
-      `input[name="default_faktur_pajak"]`
-    );
-
     //set value
-    idInput.value = outlet.id;
-    nameInput.value = outlet.name;
-    //set default faktur pajak with same value checked
-    defaultFakturPajakInput.forEach(
-      (input) => (input.checked = input.value == outlet.default_faktur_pajak)
-    );
+    idInput.value = subBrand.id;
+    nameInput.value = subBrand.name;
 
     //show modal
-    this.modalOutlets.show();
+    this.modalSubBrands.show();
 
     //set focus to first input in modal
     setTimeout(() => {
@@ -255,22 +240,22 @@ class OutletTableManager {
     }, 200);
   }
 
-  handleDeleteOutlet(outlet) {
+  handleDeleteSubBrand(subBrand) {
     showConfirmationDialog(
-      `Are you sure you want to delete ${outlet.name}?`,
-      () => this.deleteOutlet(outlet.id)
+      `Are you sure you want to delete ${subBrand.name}?`,
+      () => this.deleteSubBrand(subBrand.id)
     );
   }
 
-  async deleteOutlet(outletId) {
+  async deleteSubBrand(subBrandId) {
     try {
-      const url = `/outlet/destroy`;
+      const url = `/subBrand/destroy`;
       const csrfToken = document.querySelector(
         'meta[name="csrf-token"]'
       ).content;
 
       const data = {
-        id: outletId,
+        id: subBrandId,
         _token: csrfToken,
         _method: "DELETE",
       };
@@ -283,17 +268,17 @@ class OutletTableManager {
         await this.handleDeleteError(response);
       }
     } catch (error) {
-      console.error("Error deleting outlet:", error);
+      console.error("Error deleting subBrand:", error);
     }
   }
 
-  async handleSaveOutlet() {
-    if (!validateForm(this.outletForm)) return;
+  async handleSaveSubBrand() {
+    if (!validateForm(this.subBrandForm)) return;
 
     const formData = this.getFormData();
-    const url = formData.id ? "/outlet/put" : "/outlet/store";
+    const url = formData.id ? "/subBrand/put" : "/subBrand/store";
 
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     clearValidationErrors(modalBody);
     this.buttonSave.disabled = true;
 
@@ -311,13 +296,10 @@ class OutletTableManager {
   }
 
   getFormData() {
-    const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+    const modalBody = this.modalSubBrands._element.querySelector(".modal-body");
     const inputs = {
       id: modalBody.querySelector('input[name="id"]').value,
       name: modalBody.querySelector('input[name="name"]').value,
-      default_faktur_pajak: modalBody.querySelector(
-        'input[name="default_faktur_pajak"]:checked'
-      ).value,
       _token: document.querySelector('meta[name="csrf-token"]').content,
       _method: modalBody.querySelector('input[name="id"]').value
         ? "PUT"
@@ -328,21 +310,20 @@ class OutletTableManager {
   }
 
   async handleSuccessfulSave() {
-    this.modalOutlets.hide();
-    this.fetchOutlets();
+    this.modalSubBrands.hide();
+    this.fetchSubBrands();
     this.resetForm();
-    showToast("Outlet saved successfully");
+    showToast("SubBrand saved successfully");
   }
 
   async handleSuccessfulDelete() {
-    this.fetchOutlets();
-    showToast("Outlet saved deleted");
+    this.fetchSubBrands();
+    showToast("SubBrand saved deleted");
   }
 
   resetForm() {
-    const inputs = this.modalOutlets._element.querySelectorAll(
-      ".modal-body input[type=text], .modal-body select"
-    );
+    const inputs =
+      this.modalSubBrands._element.querySelectorAll(".modal-body input");
     inputs.forEach((input) => (input.value = ""));
   }
 
@@ -351,13 +332,14 @@ class OutletTableManager {
 
     if (data.message) {
       showToast(
-        `Failed save outlet: ${data.message ?? "Unknown error"}`,
+        `Failed save subBrand: ${data.message ?? "Unknown error"}`,
         "error"
       );
     }
 
     if (data.errors) {
-      const modalBody = this.modalOutlets._element.querySelector(".modal-body");
+      const modalBody =
+        this.modalSubBrands._element.querySelector(".modal-body");
       displayValidationErrors(modalBody, data.errors);
     }
   }
@@ -367,7 +349,7 @@ class OutletTableManager {
 
     if (data.message) {
       showToast(
-        `Failed delete outlet: ${data.message ?? "Unknown error"}`,
+        `Failed delete subBrand: ${data.message ?? "Unknown error"}`,
         "error"
       );
     }
@@ -384,4 +366,4 @@ class OutletTableManager {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => new OutletTableManager());
+document.addEventListener("DOMContentLoaded", () => new SubBrandTableManager());

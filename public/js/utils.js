@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "afterend",
         `<div class="invalid-feedback">${error}</div>`
       );
+      input.focus();
     });
   };
 
@@ -96,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
     btnLogout.addEventListener("click", async function (event) {
       event.preventDefault();
       showConfirmationDialog("Are you sure you want to logout?", async () => {
-        const response = await submitForm(this.href, {});
+        const response = await submitForm("/logout", {});
         if (response.ok) {
           window.location.reload();
         } else {
