@@ -114,4 +114,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(date).toLocaleDateString("en-US", options);
   };
+
+  window.setFocustFirstInModal = function (modalBody) {
+    //set focus to first input in modal
+    setTimeout(() => {
+      const firstVisibleInput = Array.from(
+        modalBody.querySelectorAll("input")
+      ).find((input) => input.offsetParent !== null);
+      if (firstVisibleInput) firstVisibleInput.focus();
+    }, 200);
+  };
 });

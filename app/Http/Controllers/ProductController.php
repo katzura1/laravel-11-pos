@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Brand;
 use App\Models\Product;
+use App\Models\SubBrand;
+use App\Models\Supplier;
+use Illuminate\Http\Request;
+use App\Models\ProductCategory;
+use Butschster\Head\Facades\Meta;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
 use App\Http\Requests\Product\DestroyRequest;
-use App\Models\ProductCategory;
-use Butschster\Head\Facades\Meta;
 
 class ProductController extends Controller
 {
@@ -58,6 +61,9 @@ class ProductController extends Controller
                         ->orWhere('products.buying_price', 'like', "%$search%")
                         ->orWhere('products.selling_price', 'like', "%$search%");
                 });
+            })
+            ->when($request->sort_column && $request->sort_direction, function ($query) use ($request) {
+                return $query->orderBy($request->input('sort_column'), $request->input('sort_direction'));
             })
             ->paginate($request->input("length", 10));
 

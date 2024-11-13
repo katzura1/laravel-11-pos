@@ -25,15 +25,15 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th class="column-code sortable" data-column="code">Code</th>
-                        <th class="column-name sortable" data-column="name">Name</th>
-                        <th class="column-supplier sortable" data-column="supplier">Supplier</th>
-                        <th class="column-brand sortable" data-column="brand">Brand</th>
-                        <th class="column-sub_brand sortable" data-column="sub_brand">Sub Brand</th>
-                        <th class="column-category sortable" data-column="category">Category</th>
-                        <th class="column-class sortable" data-column="class">Class</th>
-                        <th class="column-buying_price sortable" data-column="buying_price">Buying Price</th>
-                        <th class="column-selling_price sortable" data-column="selling_price">Selling Price</th>
+                        <th class="column-code sortable" data-column="products.code">Code</th>
+                        <th class="column-name sortable" data-column="products.name">Name</th>
+                        <th class="column-supplier sortable" data-column="suppliers.name">Supplier</th>
+                        <th class="column-brand sortable" data-column="brands.name">Brand</th>
+                        <th class="column-sub_brand sortable" data-column="sub_brands.name">Sub Brand</th>
+                        <th class="column-category sortable" data-column="product_categories.name">Category</th>
+                        <th class="column-class sortable" data-column="products.class">Class</th>
+                      <th class="column-buying_price sortable" data-column="products.buying_price">Buying Price</th>
+                        <th class="column-selling_price sortable" data-column="products.selling_price">Selling Price</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal modal-blur fade" id="modal-products" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal modal-blur" id="modal-products" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -64,20 +64,40 @@
               @csrf
               <input type="hidden" name="id">
               <div class="mb-3">
+                <label class="form-label required" for="code">Code</label>
+                <input type="text" class="form-control" name="code" placeholder="Input Code" maxlength="128" required>
+              </div>
+              <div class="mb-3">
                 <label class="form-label required" for="name">Nama</label>
                 <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128" required>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="parent_id">Nama</label>
-                <select name="parent_id" id="parent_id" class="form-select"></select>
+                <label class="form-label required" for="supplier_id">Supplier</label>
+                <select name="supplier_id" id="supplier_id" class="form-select" required></select>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="position">Position</label>
-                <input type="number" class="form-control" name="position" placeholder="Input Position Product" maxlength="128" required>
+                <label class="form-label required" for="brand_id">Brand</label>
+                <select name="brand_id" id="brand_id" class="form-select" required></select>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="url">Url</label>
-                <input type="text" class="form-control" name="url" placeholder="Input Url Product" maxlength="128" required>
+                <label class="form-label required" for="sub_brand_id">Sub Brand</label>
+                <select name="sub_brand_id" id="sub_brand_id" class="form-select" required></select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label required" for="product_category_id">Product Category</label>
+                <select name="product_category_id" id="product_category_id" class="form-select" required></select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label required" for="class">Class</label>
+                <input type="text" name="class" id="class" class="form-control" required></input>
+              </div>
+              <div class="mb-3">
+                <label class="form-label required" for="buying_price">Buying Price</label>
+                <input type="number" class="form-control" name="buying_price" placeholder="Input Buying Price" min="0" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label required" for="selling_price">Selling Price</label>
+                <input type="number" class="form-control" name="selling_price" placeholder="Input Selling Price" min="0" required>
               </div>
             </form>
           </div>
@@ -100,39 +120,39 @@
           <div class="modal-body">
             <form id="column-visibility-form">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="code" id="column-code" checked>
+                <input class="form-check-input" type="checkbox" value="products.code" id="column-code" checked>
                 <label class="form-check-label" for="column-code">Code</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="name" id="column-name" checked>
+                <input class="form-check-input" type="checkbox" value="products.name" id="column-name" checked>
                 <label class="form-check-label" for="column-name">Name</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="supplier" id="column-supplier" checked>
+                <input class="form-check-input" type="checkbox" value="suppliers.name" id="column-supplier" checked>
                 <label class="form-check-label" for="column-supplier">Supplier</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="brand" id="column-brand" checked>
+                <input class="form-check-input" type="checkbox" value="brands.name" id="column-brand" checked>
                 <label class="form-check-label" for="column-brand">Brand</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="sub_brand" id="column-sub_brand" checked>
+                <input class="form-check-input" type="checkbox" value="sub_brands.name" id="column-sub_brand" checked>
                 <label class="form-check-label" for="column-sub_brand">Sub Brand</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="category" id="column-category" checked>
+                <input class="form-check-input" type="checkbox" value="product_categories.name" id="column-category" checked>
                 <label class="form-check-label" for="column-category">Category</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="class" id="column-class" checked>
+                <input class="form-check-input" type="checkbox" value="products.class" id="column-class" checked>
                 <label class="form-check-label" for="column-class">Class</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="buying_price" id="column-buying_price" checked>
+                <input class="form-check-input" type="checkbox" value="products.buying_price" id="column-buying_price" checked>
                 <label class="form-check-label" for="column-buying_price">Buying Price</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="selling_price" id="column-selling_price" checked>
+                <input class="form-check-input" type="checkbox" value="products.selling_price" id="column-selling_price" checked>
                 <label class="form-check-label" for="column-selling_price">Selling Price</label>
               </div>
             </form>
