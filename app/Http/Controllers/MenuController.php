@@ -42,7 +42,14 @@ class MenuController extends Controller
         return response()->json($menus);
     }
 
-    public function getMenuParentsWithChildren(Request $request): JsonResponse
+    public function getMenuParentsWithChildren(): JsonResponse
+    {
+        $menus = $this->getParentsMenu();
+
+        return response()->json($menus);
+    }
+
+    public function getParentsMenu()
     {
         $menus = Menu::select(
             'menus.id',
@@ -59,15 +66,15 @@ class MenuController extends Controller
 
         //group by parent_id, parent_name
         $menus = $menus->groupBy('parent_id')->map(function ($item) {
-            return [
+            return (object)[
                 'id' => $item[0]->parent_id,
                 'name' => $item[0]->parent_name,
-                'children' => $item,
+                'children' => collect($item),
             ];
         })
             ->values();
 
-        return response()->json($menus);
+        return collect($menus);
     }
 
     public function getParents(Request $request): JsonResponse
@@ -79,7 +86,7 @@ class MenuController extends Controller
         return response()->json($parent);
     }
 
-    public function getUserMenus(Request $request)
+    public function getUserMenus(): JsonResponse
     {
         $currentUser = auth()->user();
 
@@ -90,6 +97,7 @@ class MenuController extends Controller
             'menus.position',
             'menus.parent_id',
             'parents.name as parent_name',
+            'parents.position as parent_position',
         )
             ->join('menu_users', 'menus.id', '=', 'menu_users.menu_id')
             ->join('menus as parents', 'menus.parent_id', '=', 'parents.id')
@@ -99,10 +107,11 @@ class MenuController extends Controller
             ->get();
 
         //group by parent_id, parent_name
-        $menus = $menus->groupBy('parent_id')->map(function ($item) {
+        $menus = $menus->sortBy('parent_position')->groupBy('parent_id')->map(function ($item) {
             return [
                 'id' => $item[0]->parent_id,
                 'name' => $item[0]->parent_name,
+                'position' => $item[0]->parent_position,
                 'children' => $item,
             ];
         })

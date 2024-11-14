@@ -30,6 +30,14 @@ class UserTableManager {
       'input[name="check_all"]'
     );
 
+    this.menuForm = document.getElementById("menu-form");
+    this.modalMenus = new bootstrap.Modal(
+      document.getElementById("modal-menus")
+    );
+    this.btnSaveMenu = this.modalMenus._element.querySelector(
+      ".modal-footer button#btn-save"
+    );
+
     this.initializeEventListeners();
     this.fetchUsers();
   }
@@ -60,12 +68,39 @@ class UserTableManager {
       event.preventDefault();
       this.handleSaveOutletUser();
     });
+
+    this.menuForm
+      .querySelectorAll('input[name="check_all"]')
+      .forEach((checkbox) => {
+        checkbox.addEventListener("change", () =>
+          this.handleCheckAllMenu(checkbox, this.menuForm)
+        );
+      });
+
+    this.menuForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      this.handleSaveMenuUser();
+    });
+
+    this.btnSaveMenu.addEventListener("click", () =>
+      this.menuForm.dispatchEvent(new Event("submit"))
+    );
   }
 
   handleCheckAll(checkbox, form) {
     const isChecked = checkbox.checked;
     form
       .querySelectorAll('input[name="outlet_id[]"]')
+      .forEach((checkbox) => (checkbox.checked = isChecked));
+  }
+
+  handleCheckAllMenu(checkbox, form) {
+    const isChecked = checkbox.checked;
+    const value = checkbox.value;
+    form
+      .querySelectorAll(
+        'input[name="menu_id[]"][data-menu-parent="' + value + '"]'
+      )
       .forEach((checkbox) => (checkbox.checked = isChecked));
   }
 
@@ -131,6 +166,14 @@ class UserTableManager {
       .forEach((button, index) => {
         button.addEventListener("click", () => {
           this.handleEdiOutlettUser(users[index]);
+        });
+      });
+
+    this.tbody
+      .querySelectorAll("button.btn-edit-menu")
+      .forEach((button, index) => {
+        button.addEventListener("click", () => {
+          this.handleEditMenuUser(users[index]);
         });
       });
   }
@@ -447,6 +490,66 @@ class UserTableManager {
     if (data.errors) {
       const modalBody = this.modalUsers._element.querySelector(".modal-body");
       displayValidationErrors(modalBody, data.errors);
+    }
+  }
+
+  handleEditMenuUser(user) {
+    const modalBody = this.modalMenus._element.querySelector(".modal-body");
+    const userIdInput = modalBody.querySelector('input[name="user_id"]');
+    const nameInput = modalBody.querySelector('input[name="name"]');
+    const menuIdCheckbox = modalBody.querySelectorAll(
+      'input[name="menu_id[]"]'
+    );
+
+    //set value
+    userIdInput.value = user.id;
+    nameInput.value = user.name;
+
+    //clear all checkbox
+    modalBody.querySelectorAll("input[name=check_all]").forEach((checkbox) => {
+      checkbox.checked = false;
+    });
+
+    menuIdCheckbox.forEach((checkbox) => (checkbox.checked = false));
+
+    const menuIds = user.menu_user
+      ? user.menu_user.map((menu) => menu.menu_id)
+      : [];
+    //set checked checkbox
+    menuIds.forEach((menuId) => {
+      const checkbox = modalBody.querySelector(
+        `input[name="menu_id[]"][value="${menuId}"]`
+      );
+      if (checkbox) checkbox.checked = true;
+    });
+
+    this.modalMenus.show();
+  }
+
+  async handleSaveMenuUser() {
+    if (!this.validateForm(this.menuForm)) return;
+
+    const modalBody = this.modalMenus._element.querySelector(".modal-body");
+    const inputs = {
+      user_id: modalBody.querySelector('input[name="user_id"]').value,
+      menu_id: Array.from(
+        modalBody.querySelectorAll(`input[name="menu_id[]"]:checked`)
+      ).map((checkbox) => checkbox.value),
+    };
+
+    const url = "/admin/store-menu";
+
+    const response = await submitForm(url, inputs);
+
+    if (response.ok) {
+      this.modalMenus.hide();
+      showToast("Menu saved successfully");
+      this.fetchUsers();
+    } else {
+      const data = await response.json();
+      if (data.message) {
+        showToast(`Error save menu: ${data.message}`, "error");
+      }
     }
   }
 

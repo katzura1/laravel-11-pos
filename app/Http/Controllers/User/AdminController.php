@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Butschster\Head\Facades\Meta;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MenuController;
+use App\Http\Requests\User\Admin\StoreMenuRequest;
 use App\Http\Requests\User\Admin\StoreOutletRequest;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\User\Admin\StoreRequest;
@@ -19,11 +21,15 @@ class AdminController extends Controller
     {
         Meta::prependTitle('User Admin');
         $outlets = Outlet::all();
+        $menus = new MenuController();
+
+        // dd($menus->getParentsMenu());
 
         return view('pages.users.admin', [
             'title' => 'Admin',
             'subtitle' => 'Kelola Data Admin',
             'outlets' => $outlets,
+            'menus' => $menus->getParentsMenu(),
         ]);
     }
 
@@ -39,6 +45,7 @@ class AdminController extends Controller
             ->with([
                 'outletUser:id,user_id,outlet_id',
                 'outletUser.outlet:id,name',
+                'menuUser:id,user_id,menu_id',
             ])
             ->when($request->has('search'), function ($query) use ($request) {
                 $search = $request->query('search');
@@ -103,5 +110,22 @@ class AdminController extends Controller
                 "message" => "Outlet assigned successfully",
             ]);
         }, 'Failed to assign outlet');
+    }
+
+    public function storeMenu(StoreMenuRequest $request): JsonResponse
+    {
+        return $this->handleTransaction(function () use ($request) {
+            $validated = $request->validated();
+            $user = User::findOrFail($validated['user_id']);
+            $user->menuUser()->delete();
+            $user->menuUser()->createMany(array_map(function ($menu_id) {
+                return ['menu_id' => $menu_id];
+            }, $validated['menu_id']));
+
+            return response()->json([
+                "status" => true,
+                "message" => "Menu assigned successfully",
+            ]);
+        }, 'Failed to assign menu');
     }
 }

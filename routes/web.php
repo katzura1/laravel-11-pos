@@ -34,6 +34,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     //outlet mapping
     Route::post('store-outlet', [AdminController::class,'storeOutlet'])->name('admin.storeOutlet');
+    //menu mapping
+    Route::post('store-menu', [AdminController::class,'storeMenu'])->name('admin.storeMenu');
 });
 
 Route::prefix('menu')->middleware(['auth'])->group(function () {

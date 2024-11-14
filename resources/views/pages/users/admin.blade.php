@@ -138,6 +138,51 @@
         </div>
       </div>
     </div>
+
+    <div class="modal modal-blur" id="modal-menus" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Form Data Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" id="menu-form">
+              @csrf
+              <input type="hidden" name="user_id">
+              <div class="mb-3">
+                <label class="form-label" for="name">Nama</label>
+                <input type="text" class="form-control" name="name" readonly>
+              </div>
+              @foreach ($menus as $item)
+              <div class="mb-3">
+                <div class="d-flex gap-4">
+                  <div class="form-label required">{{ $item->name }}</div>
+                  <!-- Checkbox all -->
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="check_all" value="{{ $item->id }}">
+                    <span class="form-check-label">Pilih Semua</span>
+                  </label>
+                </div>
+                <div>
+                  @foreach ($item->children??[] as $child)
+                  <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="menu_id[]" data-menu-parent="{{ $child->parent_id }}" value="{{ $child->id }}">
+                    <span class="form-check-label">{{ $child->name }}</span>
+                  </label>
+                  @endforeach
+                </div>
+              </div>
+              @endforeach
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="btn-save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
 @endsection 
 
 @push('after-js')
