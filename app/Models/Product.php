@@ -18,6 +18,7 @@ class Product extends Model
         'class',
         'buying_price',
         'selling_price',
+        'image'
     ] ;
 
 

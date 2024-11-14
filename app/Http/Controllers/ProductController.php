@@ -101,7 +101,16 @@ class ProductController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         return $this->handleTransaction(function () use ($request) {
-            Product::create($request->validated());
+            $validated = $request->validated();
+
+            $product = Product::create($validated);
+
+            if ($request->hasFile('image')) {
+                $imageName = 'product_img_' . $product->id . '_' . date('Ymd') . '.' . $request->file('image')->getClientOriginalExtension();
+                $imagePath = $request->file('image')->storeAs('images', $imageName, 'public');
+                $product->update(['image' => $imagePath]);
+            }
+
             return response()->json([
                 'status' => true,
                 'message' => 'Product created successfully'
@@ -113,7 +122,19 @@ class ProductController extends Controller
     {
         return $this->handleTransaction(function () use ($request) {
             $product = Product::findOrFail($request->input('id'));
-            $product->update($request->validated());
+            $validated = $request->validated();
+
+            if ($request->hasFile('image')) {
+                if ($product->image) {
+                    \Storage::disk('public')->delete($product->image);
+                }
+                $imageName = 'product_img_' . $product->id . '_' . date('Ymd') . '.' . $request->file('image')->getClientOriginalExtension();
+                $imagePath = $request->file('image')->storeAs('images', $imageName, 'public');
+                $validated['image'] = $imagePath;
+            }
+
+            $product->update($validated);
+
             return response()->json([
                 'status' => true,
                 'message' => 'Product updated successfully'
@@ -125,7 +146,13 @@ class ProductController extends Controller
     {
         return $this->handleTransaction(function () use ($request) {
             $product = Product::findOrFail($request->input('id'));
+
+            if ($product->image) {
+                \Storage::disk('public')->delete($product->image);
+            }
+
             $product->delete();
+
             return response()->json([
                 'status' => true,
                 'message' => 'Product deleted successfully'

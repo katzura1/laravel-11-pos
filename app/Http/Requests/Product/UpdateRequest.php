@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile; // Add this line
 
 class UpdateRequest extends FormRequest
 {
@@ -31,6 +32,7 @@ class UpdateRequest extends FormRequest
             'class' => ['required', 'string', 'max:128'],
             'buying_price' => ['required', 'numeric', 'min:0'],
             'selling_price' => ['required', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Update this line
         ];
     }
 }

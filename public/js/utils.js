@@ -150,11 +150,13 @@ document.addEventListener("DOMContentLoaded", function () {
       let isOpen = false;
       const childrenElements = menu.children
         .map((child) => {
-          if (currentUrl === child.url) isOpen = true;
+          let classActive = "";
+          if (currentUrl === child.url) {
+            isOpen = true;
+            classActive = "active";
+          }
           return `
-          <a class="dropdown-item ${
-            currentUrl === child.url ? "active" : ""
-          }" href="${child.url}">
+          <a class="dropdown-item ${classActive}" href="${child.url}">
             ${child.name}
           </a>
         `;
