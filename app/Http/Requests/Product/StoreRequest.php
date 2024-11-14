@@ -31,7 +31,7 @@ class StoreRequest extends FormRequest
             'class' => ['required', 'string', 'max:128'],
             'buying_price' => ['required', 'numeric', 'min:0'],
             'selling_price' => ['required', 'numeric', 'min:0'],
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Update this line
+            'image' => ['required', 'string', 'regex:/^data:image\/(jpeg|png|jpg|gif);base64,/', 'max:2097152'], // Update this line
         ];
     }
 }

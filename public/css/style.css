@@ -25,3 +25,9 @@
   content: " \25BC";
   color: #000;
 }
+
+.img-product {
+  height: 70px;
+  width: 100%;
+  object-fit: contain;
+}

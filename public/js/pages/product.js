@@ -221,11 +221,16 @@ class ProductPageManager {
   createProductRow(product, key) {
     const rowNo =
       (this.currentPage - 1) * parseInt(this.pageLengthSelect.value) + key + 1;
+    let image = "";
+    if (product.image) {
+      image = `<img src="${product.image}" alt="${product.name}" class="img-product" height="50"`;
+    }
     return `
       <tr>
         <td>${rowNo}</td>
         <td data-column="products.code">${product.code}</td>
         <td data-column="products.name">${product.name}</td>
+        <td data-column="products.image">${image}</td>
         <td data-column="suppliers.name">${product.supplier_name}</td>
         <td data-column="brands.name">${product.brand_name}</td>
         <td data-column="sub_brands.name">${product.sub_brand_name}</td>
@@ -233,7 +238,7 @@ class ProductPageManager {
         <td data-column="products.class">${product.class}</td>
         <td data-column="products.buying_price">${product.buying_price}</td>
         <td data-column="products.selling_price">${product.selling_price}</td>
-        <td class="d-flex gap-2">
+        <td>
           <button class="btn btn-primary btn-edit">Edit</button>
           <button class="btn btn-danger btn-delete">Delete</button>
         </td>
@@ -338,9 +343,15 @@ class ProductPageManager {
   async handleAddProduct() {
     const modalBody = this.productModal._element.querySelector(".modal-body");
     const idInput = modalBody.querySelector(`input[name="id"]`);
+    const imageInput = modalBody.querySelector(`input[name="image"]`);
+    const labelImageInput = modalBody.querySelector(`div[for="image"]`);
 
     //set value of id input to null
     idInput.value = null;
+
+    //set required attribute to image input
+    imageInput.required = true;
+    labelImageInput.classList.add("required");
 
     //fetch select option
     this.fetchSuppliers();
@@ -375,6 +386,8 @@ class ProductPageManager {
     const productCategorySelect = modalBody.querySelector(
       `select[name="product_category_id"]`
     );
+    const imageInput = modalBody.querySelector(`input[name="image"]`);
+    const labelImageInput = modalBody.querySelector(`div[for="image"]`);
 
     //set value of id input
     idInput.value = product.id;
@@ -383,6 +396,10 @@ class ProductPageManager {
     classInput.value = product.class;
     buyingPriceInput.value = product.buying_price;
     sellingPriceInput.value = product.selling_price;
+
+    //remove required attribute from image input
+    imageInput.removeAttribute("required");
+    labelImageInput.classList.remove("required");
 
     //fetch select option
     await this.fetchSuppliers();
@@ -513,7 +530,7 @@ class ProductPageManager {
   async handleSaveProduct() {
     if (!validateForm(this.productForm)) return;
 
-    const data = this.getFormData();
+    const data = await this.getFormData();
     let url = "/product/store";
     data["_method"] = "POST";
     if (data.id) {
@@ -537,13 +554,28 @@ class ProductPageManager {
     }
   }
 
-  getFormData() {
+  async getFormData() {
     const formData = new FormData(this.productForm);
     const data = {};
+    const promises = [];
+
     formData.forEach((value, key) => {
-      data[key] = value;
+      if (key === "image" && value instanceof File && value.size > 0) {
+        const reader = new FileReader();
+        const promise = new Promise((resolve) => {
+          reader.onloadend = () => {
+            data[key] = reader.result;
+            resolve();
+          };
+        });
+        reader.readAsDataURL(value);
+        promises.push(promise);
+      } else {
+        data[key] = value;
+      }
     });
-    return data;
+
+    return Promise.all(promises).then(() => data);
   }
 
   handleDeleteProduct(product) {

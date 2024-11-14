@@ -27,12 +27,13 @@
                         <th>No</th>
                         <th class="column-code sortable" data-column="products.code">Code</th>
                         <th class="column-name sortable" data-column="products.name">Name</th>
+                        <th class="column-image" data-column="products.image">Image</th>
                         <th class="column-supplier sortable" data-column="suppliers.name">Supplier</th>
                         <th class="column-brand sortable" data-column="brands.name">Brand</th>
                         <th class="column-sub_brand sortable" data-column="sub_brands.name">Sub Brand</th>
                         <th class="column-category sortable" data-column="product_categories.name">Category</th>
                         <th class="column-class sortable" data-column="products.class">Class</th>
-                      <th class="column-buying_price sortable" data-column="products.buying_price">Buying Price</th>
+                        <th class="column-buying_price sortable" data-column="products.buying_price">Buying Price</th>
                         <th class="column-selling_price sortable" data-column="products.selling_price">Selling Price</th>
                         <th>Action</th>
                     </tr>
@@ -76,28 +77,32 @@
                 <select name="supplier_id" id="supplier_id" class="form-select" required></select>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="brand_id">Brand</label>
+                <div class="form-label required" for="brand_id">Brand</div>
                 <select name="brand_id" id="brand_id" class="form-select" required></select>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="sub_brand_id">Sub Brand</label>
+                <div class="form-label required" for="sub_brand_id">Sub Brand</div>
                 <select name="sub_brand_id" id="sub_brand_id" class="form-select" required></select>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="product_category_id">Product Category</label>
+                <div class="form-label required" for="product_category_id">Product Category</div>
                 <select name="product_category_id" id="product_category_id" class="form-select" required></select>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="class">Class</label>
+                <div class="form-label required" for="class">Class</div>
                 <input type="text" name="class" id="class" class="form-control" required></input>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="buying_price">Buying Price</label>
+                <div class="form-label required" for="buying_price">Buying Price</div>
                 <input type="number" class="form-control" name="buying_price" placeholder="Input Buying Price" min="0" required>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="selling_price">Selling Price</label>
+                <div class="form-label required" for="selling_price">Selling Price</div>
                 <input type="number" class="form-control" name="selling_price" placeholder="Input Selling Price" min="0" required>
+              </div>
+              <div class="mb-3">
+                <div class="form-label required" for="image">Image</div>
+                <input type="file" class="form-control" name="image" required>
               </div>
             </form>
           </div>
