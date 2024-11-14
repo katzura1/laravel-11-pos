@@ -40,6 +40,8 @@ Route::prefix('menu')->middleware(['auth'])->group(function () {
     Route::get('/', [MenuController::class,'index'])->name('outlet.index');
     Route::get('/get', [MenuController::class,'getMenus'])->name('outlet.getMenus');
     Route::get('/get-parents', [MenuController::class,'getParents'])->name('outlet.getParents');
+    Route::get('get-menu-parents-with-children', [MenuController::class,'getMenuParentsWithChildren'])->name('outlet.getMenuParentsWithChildren');
+    Route::get('/get-user-menus', [MenuController::class,'getUserMenus'])->name('outlet.getUserMenus');
     Route::post('/store', [MenuController::class,'store'])->name('outlet.store');
     Route::put('/put', [MenuController::class,'update'])->name('outlet.update');
     Route::delete('/destroy', [MenuController::class,'destroy'])->name('admin.destroy');

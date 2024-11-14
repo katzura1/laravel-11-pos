@@ -45,7 +45,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal modal-blur fade" id="modal-menus" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal modal-blur" id="modal-menus" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -61,7 +61,7 @@
                 <input type="text" class="form-control" name="name" placeholder="Input Name" maxlength="128" required>
               </div>
               <div class="mb-3">
-                <label class="form-label required" for="parent_id">Nama</label>
+                <label class="form-label required" for="parent_id">Parent</label>
                 <select name="parent_id" id="parent_id" class="form-select"></select>
               </div>
               <div class="mb-3">

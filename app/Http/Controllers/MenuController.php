@@ -42,6 +42,34 @@ class MenuController extends Controller
         return response()->json($menus);
     }
 
+    public function getMenuParentsWithChildren(Request $request): JsonResponse
+    {
+        $menus = Menu::select(
+            'menus.id',
+            'menus.name',
+            'menus.url',
+            'menus.position',
+            'menus.parent_id',
+            'parents.name as parent_name',
+        )
+            ->join('menus as parents', 'menus.parent_id', '=', 'parents.id')
+            ->whereNotNull('menus.parent_id')
+            ->orderBy('menus.position', 'asc')
+            ->get();
+
+        //group by parent_id, parent_name
+        $menus = $menus->groupBy('parent_id')->map(function ($item) {
+            return [
+                'id' => $item[0]->parent_id,
+                'name' => $item[0]->parent_name,
+                'children' => $item,
+            ];
+        })
+            ->values();
+
+        return response()->json($menus);
+    }
+
     public function getParents(Request $request): JsonResponse
     {
         $parent = Menu::select('id', 'name')
@@ -49,6 +77,38 @@ class MenuController extends Controller
                   ->get();
 
         return response()->json($parent);
+    }
+
+    public function getUserMenus(Request $request)
+    {
+        $currentUser = auth()->user();
+
+        $menus = Menu::select(
+            'menus.id',
+            'menus.name',
+            'menus.url',
+            'menus.position',
+            'menus.parent_id',
+            'parents.name as parent_name',
+        )
+            ->join('menu_users', 'menus.id', '=', 'menu_users.menu_id')
+            ->join('menus as parents', 'menus.parent_id', '=', 'parents.id')
+            ->whereNotNull('menus.parent_id')
+            ->where('menu_users.user_id', $currentUser->id)
+            ->orderBy('menus.position', 'asc')
+            ->get();
+
+        //group by parent_id, parent_name
+        $menus = $menus->groupBy('parent_id')->map(function ($item) {
+            return [
+                'id' => $item[0]->parent_id,
+                'name' => $item[0]->parent_name,
+                'children' => $item,
+            ];
+        })
+            ->values();
+
+        return response()->json($menus);
     }
 
     public function store(StoreRequest $request): JsonResponse
