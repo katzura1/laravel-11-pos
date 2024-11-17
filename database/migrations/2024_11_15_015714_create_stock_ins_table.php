@@ -13,8 +13,11 @@ return new class () extends Migration {
         Schema::create('stock_ins', function (Blueprint $table) {
             $table->id();
             $table->string('stock_in_no', 128)->unique();
-            $table->foreignId('outlet_id')->constrained('outlet')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained('users')->nullOnDelete();
+            $table->date('stock_in_date');
+            $table->date('due_date');
+            $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete();
+            $table->foreignId('outlet_id')->constrained('outlets')->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

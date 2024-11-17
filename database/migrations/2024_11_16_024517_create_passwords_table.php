@@ -10,12 +10,10 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('stock_in_detail', function (Blueprint $table) {
+        Schema::create('passwords', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stock_in_id')->constrained('stock_ins')->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->integer('qty');
-            $table->double('price');
+            $table->string('name', 128)->unique();
+            $table->string('password', 128);
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('stock_in_detail');
+        Schema::dropIfExists('passwords');
     }
 };
