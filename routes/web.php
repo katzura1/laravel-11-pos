@@ -118,3 +118,11 @@ Route::prefix('product')->middleware(['auth','check.outlet'])->group(function ()
     Route::put('/put', [ProductController::class,'update'])->name('product.update');
     Route::delete('/destroy', [ProductController::class,'destroy'])->name('product.destroy');
 });
+
+Route::prefix('stock-in')->middleware(['auth','check.outlet'])->group(function () {
+    Route::get('/', [StockInController::class,'index'])->name('stock-in.index');
+    Route::get('/get', [StockInController::class,'getStockIns'])->name('stock-in.getStockIns');
+    Route::post('/store', [StockInController::class,'store'])->name('stock-in.store');
+    Route::put('/put', [StockInController::class,'update'])->name('stock-in.update');
+    Route::delete('/destroy', [StockInController::class,'destroy'])->name('stock-in.destroy');
+});

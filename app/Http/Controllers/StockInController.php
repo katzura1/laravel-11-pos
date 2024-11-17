@@ -139,4 +139,44 @@ class StockInController extends Controller
             ], 200);
         }, "Stock in successfully deleted");
     }
+
+    public function getStockIns(Request $request)
+    {
+        $stockIns = StockIn::when($request->has('search'), function ($query) use ($request) {
+            $search = $request->input('search');
+            return $query->where(function ($q) use ($search) {
+                $q->where('stock_ins.stock_in_no', 'like', '%'. $search .'%');
+                $q->orWhere('supplier.name', 'like', '%'. $search .'%');
+                $q->orWhere('outlets.name', 'like', '%'. $search .'%');
+            });
+        })
+            ->when($request->has('outlet_id'), function ($query) use ($request) {
+                return $query->where('stock_ins.outlet_id', $request->outlet_id);
+            })
+            ->when($request->has('supplier_id'), function ($query) use ($request) {
+                return $query->where('stock_ins.supplier_id', $request->supplier_id);
+            })
+            ->select(
+                'stock_ins.id',
+                'stock_ins.stock_in_no',
+                'stock_ins.stock_in_date',
+                'stock_ins.due_date',
+                'stock_ins.supplier_id',
+                'stock_ins.outlet_id',
+                'stock_ins.user_id',
+                'stock_ins.created_at',
+                'stock_ins.updated_at',
+                'outlets.name as outlet_name',
+                'supplier.name as supplier_name',
+            )
+            ->join('outlets', 'outlets.id', '=', 'stock_ins.outlet_id')
+            ->join('supplier', 'supplier.id', '=', 'stock_ins.supplier_id')
+            ->with([
+                'detail:id,stock_in_id,product_id,qty,price',
+                'detail.product:id,name',
+            ])
+            ->paginate($request->length ?? 10);
+
+        return response()->json($stockIns);
+    }
 }
