@@ -2,7 +2,6 @@
     <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
 
     <!-- Modal Confirmation -->
-    <!-- Confirmation Modal HTML -->
     <div class="modal modal-blur" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">

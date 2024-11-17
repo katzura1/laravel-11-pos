@@ -7,6 +7,9 @@
     </button>
 
     <div class="navbar-nav flex-row order-md-last">
+      <div class="d-none d-md-flex align-items-center">
+        {{ session()->get('outlet_name') }}
+      </div>
       <div class="d-none d-md-flex">
         <!-- Dark Mode Toggle -->
         <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" 
