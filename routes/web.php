@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OutletController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockInController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SubBrandController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\User\AdminController;
 use App\Http\Controllers\User\CashierController;
+use App\Http\Controllers\ProductCategoryController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [LoginController::class,'index'])->name('login');

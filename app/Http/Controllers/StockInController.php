@@ -9,9 +9,25 @@ use App\Http\Requests\StockIn\StoreRequest;
 use App\Models\ProductStock;
 use App\Models\StockInDetail;
 use App\Models\Product;
+use App\Models\Supplier;
 
 class StockInController extends Controller
 {
+    public function index()
+    {
+        $suppliers = Supplier::all();
+        $outlet = [
+            'id' => session()->get('outlet_id'),
+            'name' => session()->get('outlet_name'),
+        ];
+
+        return view(
+            'pages.stock-in.list',
+            compact('suppliers', 'outlet')
+        );
+    }
+
+
     public function store(StoreRequest $request): JsonResponse
     {
         return $this->handleTransaction(function () use ($request) {
@@ -146,15 +162,30 @@ class StockInController extends Controller
             $search = $request->input('search');
             return $query->where(function ($q) use ($search) {
                 $q->where('stock_ins.stock_in_no', 'like', '%'. $search .'%');
-                $q->orWhere('supplier.name', 'like', '%'. $search .'%');
+                $q->orWhere('suppliers.name', 'like', '%'. $search .'%');
                 $q->orWhere('outlets.name', 'like', '%'. $search .'%');
             });
         })
             ->when($request->has('outlet_id'), function ($query) use ($request) {
                 return $query->where('stock_ins.outlet_id', $request->outlet_id);
             })
+            ->when(session()->get('outlet_id'), function ($query) {
+                return $query->where('stock_ins.outlet_id', session()->get('outlet_id'));
+            })
             ->when($request->has('supplier_id'), function ($query) use ($request) {
                 return $query->where('stock_ins.supplier_id', $request->supplier_id);
+            })
+            ->when($request->has('start_date'), function ($query) use ($request) {
+                return $query->whereDate('stock_ins.stock_in_date', '>=', $request->start_date);
+            })
+            ->when($request->has('end_date'), function ($query) use ($request) {
+                return $query->whereDate('stock_ins.stock_in_date', '<=', $request->end_date);
+            })
+            ->when($request->sort_column && $request->sort_direction, function ($query) use ($request) {
+                return $query->orderBy(
+                    $request->input('sort_column'),
+                    $request->input('sort_direction')
+                );
             })
             ->select(
                 'stock_ins.id',
@@ -167,10 +198,12 @@ class StockInController extends Controller
                 'stock_ins.created_at',
                 'stock_ins.updated_at',
                 'outlets.name as outlet_name',
-                'supplier.name as supplier_name',
+                'suppliers.name as supplier_name',
+                'users.name as user_name'
             )
             ->join('outlets', 'outlets.id', '=', 'stock_ins.outlet_id')
-            ->join('supplier', 'supplier.id', '=', 'stock_ins.supplier_id')
+            ->join('suppliers', 'suppliers.id', '=', 'stock_ins.supplier_id')
+            ->join('users', 'users.id', '=', 'stock_ins.user_id')
             ->with([
                 'detail:id,stock_in_id,product_id,qty,price',
                 'detail.product:id,name',
