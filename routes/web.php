@@ -107,7 +107,7 @@ Route::prefix('product-category')->middleware(['auth'])->group(function () {
     Route::delete('/destroy', [ProductCategoryController::class,'destroy'])->name('product-category.destroy');
 });
 
-Route::prefix('product')->middleware(['auth','check.outlet'])->group(function () {
+Route::prefix('product')->middleware(['auth'])->group(function () {
     Route::get('/', [ProductController::class,'index'])->name('product.index');
     Route::get('/get', [ProductController::class,'getProducts'])->name('product.getProducts');
     Route::get('get-suppliers', [ProductController::class,'getSuppliers'])->name('product.getSuppliers');
